@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="vendor_src">
+      <UniqueIdentifier>{51924468-9bd4-4156-8a83-ed62628b6eaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor_src\glfw">
+      <UniqueIdentifier>{ec983091-962c-4f18-9ed7-8b4fc72dca9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor_src\framework">
+      <UniqueIdentifier>{f00e4bb1-3dec-42db-af5f-8debfe15b2ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor_src\glew">
+      <UniqueIdentifier>{5f73006f-3c82-4709-8d45-34657efa078a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ext">
+      <UniqueIdentifier>{3326f666-4409-4097-adc0-0d221227f697}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ext">
+      <UniqueIdentifier>{a20b1a33-80ab-4541-a878-1533770b0e27}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="vendor\glfw\src\win32_time.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glfw\src\win32_window.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glfw\src\window.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glfw\src\init.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glfw\src\input.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glfw\src\monitor.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glfw\src\vulkan.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glfw\src\wgl_context.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glfw\src\win32_init.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glfw\src\win32_joystick.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glfw\src\win32_monitor.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glfw\src\win32_thread.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glfw\src\osmesa_context.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glfw\src\egl_context.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glfw\src\context.c">
+      <Filter>vendor_src\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\framework\src\cRZCOMDllDirector.cpp">
+      <Filter>vendor_src\framework</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\framework\src\cRZRefCount.cpp">
+      <Filter>vendor_src\framework</Filter>
+    </ClCompile>
+    <ClCompile Include="scgl\cGDriver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scgl\cGDriversCOMDirector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scgl\cGDriver_Info.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scgl\cGDriver_Init.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scgl\cGDriver_Unknown.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scgl\cGDriver_Viewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glew\src\glew.c">
+      <Filter>vendor_src\glew</Filter>
+    </ClCompile>
+    <ClCompile Include="scgl\cGDriver_Textures.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scgl\ext\cGDriver_BufferRegions.cpp">
+      <Filter>Source Files\ext</Filter>
+    </ClCompile>
+    <ClCompile Include="scgl\ext\cGDriver_Lighting.cpp">
+      <Filter>Source Files\ext</Filter>
+    </ClCompile>
+    <ClCompile Include="scgl\ext\cGDriver_VertexBuffers.cpp">
+      <Filter>Source Files\ext</Filter>
+    </ClCompile>
+    <ClCompile Include="scgl\ext\cGDriver_Snapshot.cpp">
+      <Filter>Source Files\ext</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\framework\src\cRZString.cpp">
+      <Filter>vendor_src\framework</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="scgl\cGDriver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scgl\cIGZBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scgl\cIGZGDriver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scgl\sGDMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scgl\ext\cIGZGSnapshotExtension.h">
+      <Filter>Header Files\ext</Filter>
+    </ClInclude>
+    <ClInclude Include="scgl\ext\cIGZGBufferRegionExtension.h">
+      <Filter>Header Files\ext</Filter>
+    </ClInclude>
+    <ClInclude Include="scgl\ext\cIGZGDriverLightingExtension.h">
+      <Filter>Header Files\ext</Filter>
+    </ClInclude>
+    <ClInclude Include="scgl\ext\cIGZGDriverVertexBufferExtension.h">
+      <Filter>Header Files\ext</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

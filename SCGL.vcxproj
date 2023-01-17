@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="scgl\cGDriver.cpp" />
+    <ClCompile Include="scgl\cGDriversCOMDirector.cpp" />
+    <ClCompile Include="scgl\cGDriver_Info.cpp" />
+    <ClCompile Include="scgl\cGDriver_Init.cpp" />
+    <ClCompile Include="scgl\cGDriver_Textures.cpp" />
+    <ClCompile Include="scgl\cGDriver_Unknown.cpp" />
+    <ClCompile Include="scgl\cGDriver_Viewport.cpp" />
+    <ClCompile Include="scgl\ext\cGDriver_BufferRegions.cpp" />
+    <ClCompile Include="scgl\ext\cGDriver_Lighting.cpp" />
+    <ClCompile Include="scgl\ext\cGDriver_Snapshot.cpp" />
+    <ClCompile Include="scgl\ext\cGDriver_VertexBuffers.cpp" />
+    <ClCompile Include="vendor\framework\src\cRZCOMDllDirector.cpp" />
+    <ClCompile Include="vendor\framework\src\cRZRefCount.cpp" />
+    <ClCompile Include="vendor\framework\src\cRZString.cpp" />
+    <ClCompile Include="vendor\glew\src\glew.c" />
+    <ClCompile Include="vendor\glfw\src\context.c" />
+    <ClCompile Include="vendor\glfw\src\egl_context.c" />
+    <ClCompile Include="vendor\glfw\src\init.c" />
+    <ClCompile Include="vendor\glfw\src\input.c" />
+    <ClCompile Include="vendor\glfw\src\monitor.c" />
+    <ClCompile Include="vendor\glfw\src\osmesa_context.c" />
+    <ClCompile Include="vendor\glfw\src\vulkan.c" />
+    <ClCompile Include="vendor\glfw\src\wgl_context.c" />
+    <ClCompile Include="vendor\glfw\src\win32_init.c" />
+    <ClCompile Include="vendor\glfw\src\win32_joystick.c" />
+    <ClCompile Include="vendor\glfw\src\win32_monitor.c" />
+    <ClCompile Include="vendor\glfw\src\win32_thread.c" />
+    <ClCompile Include="vendor\glfw\src\win32_time.c" />
+    <ClCompile Include="vendor\glfw\src\win32_window.c" />
+    <ClCompile Include="vendor\glfw\src\window.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="scgl\cGDriver.h" />
+    <ClInclude Include="scgl\cIGZBuffer.h" />
+    <ClInclude Include="scgl\cIGZGDriver.h" />
+    <ClInclude Include="scgl\ext\cIGZGBufferRegionExtension.h" />
+    <ClInclude Include="scgl\ext\cIGZGDriverLightingExtension.h" />
+    <ClInclude Include="scgl\ext\cIGZGDriverVertexBufferExtension.h" />
+    <ClInclude Include="scgl\ext\cIGZGSnapshotExtension.h" />
+    <ClInclude Include="scgl\sGDMode.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{e510d610-6d37-4960-ae0f-fb61b13318f5}</ProjectGuid>
+    <RootNamespace>scgl</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);.\vendor\framework\include;.\vendor\glew\include;.\vendor\glfw\include</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);.\vendor\framework\include;.\vendor\glew\include;.\vendor\glfw\include</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;GLEW_STATIC;_GLFW_WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;scgl_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>$(CoreLibraryDependencies);opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>WIN32;GLEW_STATIC;_GLFW_WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;scgl_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <OmitFramePointers>true</OmitFramePointers>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ControlFlowGuard>false</ControlFlowGuard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <AdditionalDependencies>$(CoreLibraryDependencies);opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
