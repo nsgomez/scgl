@@ -1,5 +1,7 @@
 # SCGL · an OpenGL 3 renderer for SimCity 4
 
+[![MSBuild](https://github.com/nsgomez/scgl/actions/workflows/msbuild.yml/badge.svg)](https://github.com/nsgomez/scgl/actions/workflows/msbuild.yml)
+
 **SCGL** (pronounced *sigil*) replaces SimCity 4's OpenGL hardware rendering engine with an implementation targeting
 OpenGL 3.0. Its goal is to fix incompatibility with modern graphics drivers and Windows versions. It also addresses
 performance shortcomings in the original OpenGL driver.
