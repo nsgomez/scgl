@@ -12,7 +12,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::GetVideoModeInfo(uint32_t dwIndex, sGDMode& gdMode) {
-		if (dwIndex == -1 || dwIndex >= videoModes.size()) {
+		if (dwIndex == -1 || dwIndex >= (uint32_t)videoModeCount) {
 			SetLastError(DriverError::OUT_OF_RANGE);
 			return;
 		}

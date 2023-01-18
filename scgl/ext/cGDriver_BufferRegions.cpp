@@ -18,12 +18,16 @@ namespace nSCGL
 #endif
 
 		GLuint result = glNewBufferRegion(regionTypeMap[gdBufferRegionType]);
+		if (result != 0) {
+			bufferRegionFlags |= 1 << (result - 1);
+		}
+
 		return result;
 	}
 
 	bool cGDriver::DeleteBufferRegion(int32_t region) {
 		glDeleteBufferRegion(region);
-		bufferRegions.erase(region);
+		bufferRegionFlags &= ~(1 << (region - 1));
 		return true;
 	}
 
@@ -38,7 +42,7 @@ namespace nSCGL
 	}
 
 	bool cGDriver::IsBufferRegion(uint32_t region) {
-		return bufferRegions.contains(region);
+		return (bufferRegionFlags & (1 << (region - 1))) != 0;
 	}
 
 	bool cGDriver::CanDoPartialRegionWrites(void) {
@@ -50,11 +54,13 @@ namespace nSCGL
 	}
 
 	bool cGDriver::DeleteAllBufferRegions(void) {
-		for (uint32_t region : bufferRegions) {
-			glDeleteBufferRegion(region);
+		for (size_t i = 0; i < sizeof(bufferRegionFlags) * 8; i++) {
+			if (IsBufferRegion(i)) {
+				DeleteBufferRegion(i);
+			}
 		}
 
-		bufferRegions.clear();
+		bufferRegionFlags = 0;
 		return true;
 	}
 }

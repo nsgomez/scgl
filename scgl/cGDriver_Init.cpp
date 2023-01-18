@@ -1,4 +1,3 @@
-#include <format>
 #include <string>
 #include "cGDriver.h"
 
@@ -35,8 +34,11 @@ namespace nSCGL
 			const char* errorDescription;
 			int errorCode = glfwGetError(&errorDescription);
 
-			std::string error = std::format("Failed to initialize GLFW (error code: {})\n{}", errorCode, errorDescription);
-			MessageBoxA(NULL, error.c_str(), "SCGL failed to start", MB_ICONERROR);
+			char* error = new char[strlen(errorDescription) + 64];
+			sprintf(error, "Failed to initialize GLFW (error code: %d)\n%s", errorCode, errorDescription);
+			MessageBoxA(NULL, error, "SCGL failed to start", MB_ICONERROR);
+			delete[] error;
+
 			SetLastError(DriverError::CREATE_CONTEXT_FAIL);
 			return false;
 		}
@@ -102,10 +104,11 @@ namespace nSCGL
 
 	int32_t cGDriver::InitializeVideoModeVector(void) {
 		const GLFWvidmode* modes = glfwGetVideoModes(glfwGetPrimaryMonitor(), &videoModeCount);
+		if (modes == nullptr || videoModeCount == 0) {
+			return 0;
+		}
 
-		sGDMode tempMode;
-		memset(&tempMode, 0x00, sizeof(sGDMode));
-
+		sGDMode tempMode{};
 		tempMode.supportsHardwareAcceleration = true;
 
 		// If not set, SC4 throws the "Could not initialize the hardware driver" error and switches to software mode.
@@ -150,7 +153,6 @@ namespace nSCGL
 			videoModes.push_back(tempMode);
 		}
 
-		areVideoModesLoaded = true;
 		return videoModeCount;
 	}
 }

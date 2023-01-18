@@ -6,8 +6,14 @@ namespace nSCGL
 {
 	static const uint32_t kSCVKGDriverPluginCOMDirectorID = 0xCB6EC543;
 
-	class cGDriversCOMDirector : public cRZCOMDllDirector
+	class cGDriversCOMDirector : public cRZCOMSlimDllDirector
 	{
+	public:
+		cGDriversCOMDirector() :
+			cRZCOMSlimDllDirector(cGDriver::kSCGLGDriverGZCLSID, cGDriver::FactoryFunctionPtr2)
+		{
+		}
+
 	public:
 		uint32_t GetDirectorID() const {
 			return kSCVKGDriverPluginCOMDirectorID;
@@ -30,26 +36,13 @@ namespace nSCGL
 			return true;
 		}
 
-		bool InitializeCOM(cIGZCOM* pCOM, const cIGZString& sLibraryPath) {
-			AddCls(cGDriver::kSCGLGDriverGZCLSID, cGDriver::FactoryFunctionPtr2);
-			return cRZCOMDllDirector::InitializeCOM(pCOM, sLibraryPath);
-		}
-
 		void EnumClassObjects(ClassObjectEnumerationCallback pCallback, void* pContext) {
-			for (ChildDirectorArray::iterator it(mChildDirectorArray.begin()); it != mChildDirectorArray.end(); ++it) {
-				cRZCOMDllDirector* const pDirector = *it;
-				pDirector->EnumClassObjects(pCallback, pContext);
-			}
-
-			for (ClassObjectMap::iterator it2(mClassObjectMap.begin()); it2 != mClassObjectMap.end(); ++it2) {
-				const uint32_t classID = (*it2).first;
-				pCallback(classID, 1000000, pContext);
-			}
+			pCallback(classId, 1000000, pContext);
 		}
 	};
 }
 
-cRZCOMDllDirector* RZGetCOMDllDirector() {
+cRZCOMSlimDllDirector* RZGetCOMDllDirector() {
 	static nSCGL::cGDriversCOMDirector sDirector;
 	return &sDirector;
 }

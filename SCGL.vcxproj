@@ -24,7 +24,6 @@
     <ClCompile Include="scgl\ext\cGDriver_VertexBuffers.cpp" />
     <ClCompile Include="vendor\framework\src\cRZCOMDllDirector.cpp" />
     <ClCompile Include="vendor\framework\src\cRZRefCount.cpp" />
-    <ClCompile Include="vendor\framework\src\cRZString.cpp" />
     <ClCompile Include="vendor\glew\src\glew.c" />
     <ClCompile Include="vendor\glfw\src\context.c" />
     <ClCompile Include="vendor\glfw\src\egl_context.c" />

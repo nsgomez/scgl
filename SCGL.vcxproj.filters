@@ -120,9 +120,6 @@
     <ClCompile Include="scgl\ext\cGDriver_Snapshot.cpp">
       <Filter>Source Files\ext</Filter>
     </ClCompile>
-    <ClCompile Include="vendor\framework\src\cRZString.cpp">
-      <Filter>vendor_src\framework</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scgl\cGDriver.h">

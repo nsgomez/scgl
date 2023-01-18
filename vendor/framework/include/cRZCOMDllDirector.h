@@ -1,18 +1,17 @@
 #pragma once
 #include "cIGZCOMDirector.h"
 #include "cIGZFrameWorkHooks.h"
-#include "cRZString.h"
 
-// TODO: use EASTL instead
-#include <unordered_map>
-#include <vector>
-
-// This class is derived from Paul Pedriana's released code and should be perfect.
-class cRZCOMDllDirector : public cIGZCOMDirector, public cIGZFrameWorkHooks
+class cRZCOMSlimDllDirector : public cIGZCOMDirector, public cIGZFrameWorkHooks
 {
 	public:
-		cRZCOMDllDirector(void);
-		virtual ~cRZCOMDllDirector(void);
+		typedef void (*DummyFunctionPtr)();
+		typedef cIGZUnknown* (*FactoryFunctionPtr1)();
+		typedef bool (*FactoryFunctionPtr2)(uint32_t, void**);
+
+	public:
+		cRZCOMSlimDllDirector(uint32_t classId, FactoryFunctionPtr2 classFactory);
+		virtual ~cRZCOMSlimDllDirector(void);
 
 	public:
 		virtual uint32_t GetDirectorID(void) const = 0;
@@ -25,10 +24,6 @@ class cRZCOMDllDirector : public cIGZCOMDirector, public cIGZFrameWorkHooks
 		virtual uint32_t RefCount(void);
 
 	public:
-		typedef void (*DummyFunctionPtr)();
-		typedef cIGZUnknown* (*FactoryFunctionPtr1)();
-		typedef bool (*FactoryFunctionPtr2)(uint32_t, void**);
-
 		bool InitializeCOM(cIGZCOM* pCOM, const cIGZString& sLibraryPath);
 		bool OnStart(cIGZCOM* pCOM);
 		bool GetLibraryPath(cIGZString& sLibraryPath);
@@ -63,26 +58,17 @@ class cRZCOMDllDirector : public cIGZCOMDirector, public cIGZFrameWorkHooks
 			kGZIID_cIGZCOMDirector = 0xA21EE941
 		};
 
-		void AddCls(uint32_t clsid, FactoryFunctionPtr1 pff1);
-		void AddCls(uint32_t clsid, FactoryFunctionPtr2 pff2);
-
 	protected:
 		uint32_t mnRefCount;
 		uint32_t mDirectorID;
-		cRZString msLibraryPath;
+		char* msLibraryPath;
 		cIGZCOM* mpCOM;
 		cIGZFrameWork* mpFrameWork;
 
-		typedef std::vector<cRZCOMDllDirector*> ChildDirectorArray;
-		ChildDirectorArray mChildDirectorArray;
-
-		typedef uint32_t ClassObjectID;
-		typedef std::pair<DummyFunctionPtr, int32_t> FactoryFuncRecord;
-		typedef std::unordered_map<ClassObjectID, FactoryFuncRecord> ClassObjectMap;
-
-		ClassObjectMap mClassObjectMap;
+		uint32_t classId;
+		FactoryFunctionPtr2 classFactory;
 };
 
-cRZCOMDllDirector* RZGetCOMDllDirector();
+cRZCOMSlimDllDirector* RZGetCOMDllDirector();
 inline cIGZFrameWork* RZGetFrameWork() { return RZGetCOMDllDirector()->FrameWork(); }
 inline cIGZFrameWork* RZGetFramework() { return RZGetCOMDllDirector()->FrameWork(); }

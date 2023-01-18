@@ -39,7 +39,6 @@ namespace nSCGL
 #ifndef NDEBUG
 		dbgLastError(GL_NO_ERROR),
 #endif
-		areVideoModesLoaded(false),
 		currentVideoMode(-1),
 		driverInfo("Maxis 3D GDriver\nOpenGL\n3.0\n"),
 		videoModeCount(0),
@@ -61,7 +60,7 @@ namespace nSCGL
 		activeTextureStage(0),
 		maxTextureUnits(0),
 		deviceContext(nullptr),
-		bufferRegions()
+		bufferRegionFlags(0)
 	{
 	}
 
@@ -270,15 +269,10 @@ namespace nSCGL
 	}
 
 	void cGDriver::Clear(GLbitfield mask) {
-		static FILE* clearLog = fopen("cGDriver.clear.log", "w");
-		fprintf(clearLog, "%x\n", mask);
-		fflush(clearLog);
-
 		GLbitfield glMask = 0;
 		glMask  = (mask & 0x1000) >> 4; // GL_DEPTH_BUFFER_BIT   (0x100)
 		glMask |= (mask & 0x2000) >> 3; // GL_STENCIL_BUFFER_BIT (0x400)
 		glMask |= (mask & 0x4000);      // GL_COLOR_BUFFER_BIT   (0x4000)
-		//glClear(glMask | GL_COLOR_BUFFER_BIT);
 		glClear(glMask);
 	}
 

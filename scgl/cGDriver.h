@@ -1,7 +1,6 @@
 #pragma once
 #include <cstdio>
 #include <string>
-#include <unordered_set>
 #include <vector>
 #include <cRZRefCount.h>
 #include "cIGZGDriver.h"
@@ -17,6 +16,7 @@ extern FILE* gLogFile;
 #ifdef NDEBUG
 #define NOTIMPL()
 #define SIZE_CHECK(...)
+#define SIZE_CHECK_RETVAL(...)
 #else
 #define NOTIMPL() { if (gLogFile == nullptr) gLogFile = fopen("cGDriver.notimpl.log", "w"); fprintf(gLogFile, "%s\n", __FUNCSIG__); fflush(gLogFile); }
 #define UNEXPECTED NOTIMPL
@@ -79,7 +79,6 @@ namespace nSCGL
 
 		std::vector<sGDMode> videoModes;
 		int videoModeCount;
-		bool areVideoModesLoaded;
 		int currentVideoMode;
 		std::string driverInfo;
 
@@ -100,8 +99,11 @@ namespace nSCGL
 		int32_t interleavedStride;      // 0x88
 		void const* interleavedPointer; // 0x8c
 
+		// We're not expecting to use a lot of buffer regions simultaneously, so we'll use a
+		// 32-bit mask to indicate which regions are allocated and free.
+		uint32_t bufferRegionFlags;
+
 		void* deviceContext;
-		std::unordered_set<uint32_t> bufferRegions;
 
 	private:
 		void SetLastError(DriverError err);
