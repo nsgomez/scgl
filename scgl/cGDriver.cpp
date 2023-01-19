@@ -348,10 +348,14 @@ namespace nSCGL
 
 	void cGDriver::Fog(uint32_t gdFogParamType, uint32_t gdFogParam) {
 		static GLenum fogParamMap[] = { GL_EXP, GL_EXP2, GL_LINEAR, GL_FOG_COORD, GL_ZERO };
+		SIZE_CHECK(gdFogParamType, fogParamTypeMap);
+		SIZE_CHECK(gdFogParam, fogParamMap);
+
 		glFogi(fogParamTypeMap[gdFogParamType], fogParamMap[gdFogParam]);
 	}
 
 	void cGDriver::Fog(uint32_t gdFogParamType, GLfloat const* params) {
+		SIZE_CHECK(gdFogParamType, fogParamTypeMap);
 		glFogfv(fogParamTypeMap[gdFogParamType], params);
 	}
 
