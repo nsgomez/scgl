@@ -119,11 +119,14 @@ namespace nSCGL
 	}
 
 	void cGDriver::TexStage(GLenum texture) {
-		//NOTIMPL();
+		if (videoModes[currentVideoMode].supportsMultitexture || texture != 0) {
+			if (texture < maxTextureUnits) {
+				activeTextureStage = texture;
+				glClientActiveTexture(GL_TEXTURE0 + texture);
+				return;
+			}
 
-		if (texture != 0) {
-			activeTextureStage = texture;
-			glClientActiveTexture(GL_TEXTURE0 + texture);
+			SetLastError(DriverError::INVALID_VALUE);
 		}
 	}
 
@@ -192,7 +195,11 @@ namespace nSCGL
 		}
 #endif
 
-		//NOTIMPL();
+		if (!videoModes[currentVideoMode].supportsTextureEnvCombine) {
+			SetLastError(DriverError::INVALID_VALUE);
+			return;
+		}
+
 		glTexEnvi(GL_TEXTURE_ENV, pnameMap[gdParamType], paramMap[gdParam]);
 	}
 
@@ -210,7 +217,11 @@ namespace nSCGL
 		}
 #endif
 
-		//NOTIMPL();
+		if (!videoModes[currentVideoMode].supportsTextureEnvCombine) {
+			SetLastError(DriverError::INVALID_VALUE);
+			return;
+		}
+
 		glTexEnvi(GL_TEXTURE_ENV, pnameMap[gdParamType], paramMap[gdParam]);
 	}
 
@@ -225,7 +236,11 @@ namespace nSCGL
 		}
 #endif
 
-		//NOTIMPL();
+		if (!videoModes[currentVideoMode].supportsTextureEnvCombine) {
+			SetLastError(DriverError::INVALID_VALUE);
+			return;
+		}
+
 		glTexEnvi(GL_TEXTURE_ENV, pnameMap[gdParamType], paramMap[gdBlend]);
 	}
 
@@ -240,7 +255,11 @@ namespace nSCGL
 		}
 #endif
 
-		//NOTIMPL();
+		if (!videoModes[currentVideoMode].supportsTextureEnvCombine) {
+			SetLastError(DriverError::INVALID_VALUE);
+			return;
+		}
+
 		glTexEnvfv(GL_TEXTURE_ENV, pnameMap[gdPname], &paramMap[gdParam]);
 	}
 

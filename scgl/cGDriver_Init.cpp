@@ -109,12 +109,12 @@ namespace nSCGL
 		}
 
 		sGDMode tempMode{};
-		tempMode.supportsHardwareAcceleration = true;
 
 		// If not set, SC4 throws the "Could not initialize the hardware driver" error and switches to software mode.
 		tempMode.isInitialized = true;
 
 		// TODO: do we actually need to check all these extensions or are they all part of the OpenGL 3.0 core profile?
+		tempMode.supportsStencilBuffer = true;
 		tempMode.supportsTextureCompression = true;
 		tempMode.supportsMultitexture = true;
 		tempMode.supportsTextureEnvCombine = true;
