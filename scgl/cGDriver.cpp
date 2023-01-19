@@ -120,13 +120,13 @@ namespace nSCGL
 			if (colorArrayEnabled) {
 				glDisableClientState(GL_COLOR_ARRAY);
 				colorArrayEnabled = false;
+				glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			}
 		}
 		else {
 			if (!colorArrayEnabled) {
 				glEnableClientState(GL_COLOR_ARRAY);
 				colorArrayEnabled = true;
-				glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			}
 
 			int colorOffset = VertexFormatElementOffset(format, 5, 0);
