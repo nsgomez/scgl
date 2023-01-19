@@ -307,7 +307,7 @@ namespace nSCGL
 		GLint texParamWidth, texParamHeight, internalFormat;
 		glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_WIDTH, &texParamWidth);
 
-		if (glGetError() == GL_NO_ERROR && width != 0) {
+		if (glGetError() == GL_NO_ERROR && texParamWidth != 0) {
 			glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_HEIGHT, &texParamHeight);
 			glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_INTERNAL_FORMAT, &internalFormat);
 
