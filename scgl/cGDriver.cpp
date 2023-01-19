@@ -227,7 +227,7 @@ namespace nSCGL
 
 		stride *= sizeof(GLfloat);
 		if ((gdVertexFormat & 0xf) != 0) {
-			uint32_t addlStride = ((gdVertexFormat >> 12) & 0xf)
+			uint32_t addlStride = ((gdVertexFormat >> 18) & 0xf)
 				+ (((gdVertexFormat >> 6) & 1) * 3)
 				+ (((gdVertexFormat >> 22) & 0xf) * 4)
 				+ ((gdVertexFormat >> 2) & 7)
