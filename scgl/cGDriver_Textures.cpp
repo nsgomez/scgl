@@ -25,6 +25,39 @@ namespace nSCGL
 
 	extern GLenum typeMap[16];
 
+	void cGDriver::ApplyTextureStages() {
+		for (uint32_t i = 0; i < maxTextureUnits; i++) {
+			TextureStageData& texStage = textureStageData[i];
+			if (!texStage.toBeEnabled) {
+				if (texStage.currentlyEnabled) {
+					if (videoModes[currentVideoMode].supportsMultitexture) {
+						glClientActiveTexture(GL_TEXTURE0 + i);
+					}
+
+					glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+					texStage.currentlyEnabled = false;
+					texStage.textureHandle = nullptr;
+				}
+			}
+			else {
+				if (videoModes[currentVideoMode].supportsMultitexture) {
+					glClientActiveTexture(GL_TEXTURE0 + i);
+				}
+
+				if (!texStage.currentlyEnabled) {
+					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+					texStage.currentlyEnabled = true;
+				}
+
+				void const* textureHandle = reinterpret_cast<uint8_t const*>(interleavedPointer) + VertexFormatElementOffset(interleavedFormat, 7, texStage.coordSrc);
+				if (texStage.textureHandle != textureHandle) {
+					glTexCoordPointer(2, GL_FLOAT, interleavedStride, textureHandle);
+					texStage.textureHandle = textureHandle;
+				}
+			}
+		}
+	}
+
 	void cGDriver::GenTextures(GLsizei n, GLuint* textures) {
 		glGenTextures(n, textures);
 	}

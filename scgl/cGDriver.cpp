@@ -73,7 +73,7 @@ namespace nSCGL
 		GLenum mode = drawModeMap[gdMode];
 
 		NOTIMPL();
-		SetTextureState();
+		ApplyTextureStages();
 		glDrawArrays(mode, first, count);
 	}
 
@@ -85,7 +85,7 @@ namespace nSCGL
 		GLenum type = typeMap[gdType];
 
 		NOTIMPL();
-		SetTextureState();
+		ApplyTextureStages();
 		glDrawElements(mode, count, type, indices);
 	}
 
@@ -136,30 +136,6 @@ namespace nSCGL
 		interleavedFormat = format;
 		interleavedStride = stride;
 		interleavedPointer = pointer;
-	}
-
-	void cGDriver::SetTextureState() {
-		/*for (uint32_t i = 0; i < maxTextureUnits; i++) { // TODO: NOTIMPL(): 0x28 (repeated by size 0xc) - texture data?
-			if (false) { // NOTIMPL()
-				if (false) { // NOTIMPL()
-					if (false) { // NOTIMPL() - *(this + 0xF4) != 0
-						glClientActiveTexture(GL_TEXTURE0 + i);
-					}
-
-					glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-					// NOTIMPL()
-				}
-			}
-			else {
-				if (false) { // NOTIMPL() - *(this + 0xF4) != 0
-					glClientActiveTexture(GL_TEXTURE0 + i);
-				}
-
-				if (false) { // NOTIMPL()
-					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-				}
-			}
-		}*/
 	}
 
 	uint32_t cGDriver::MakeVertexFormat(uint32_t, intptr_t gdElementTypePtr) {

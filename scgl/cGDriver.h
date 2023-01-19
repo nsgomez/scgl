@@ -109,7 +109,7 @@ namespace nSCGL
 	private:
 		void SetLastError(DriverError err);
 		void SetLightingParameters();
-		void SetTextureState();
+		void ApplyTextureStages();
 		int32_t InitializeVideoModeVector(void);
 
 	public:
