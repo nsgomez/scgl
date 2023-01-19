@@ -296,7 +296,7 @@ namespace nSCGL
 		return textureId;
 	}
 
-	void cGDriver::LoadTextureLevel(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, uint32_t gdTexFormat, uint32_t gdType, uint32_t pixelStorageMode, void const* pixels) {
+	void cGDriver::LoadTextureLevel(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, uint32_t gdTexFormat, uint32_t gdType, uint32_t rowLength, void const* pixels) {
 		GLenum glFormat = formatMap[gdTexFormat];
 		GLenum glType = typeMap[gdType];
 
@@ -323,7 +323,7 @@ namespace nSCGL
 				return;
 			}
 
-			glPixelStorei(GL_UNPACK_ROW_LENGTH, pixelStorageMode);
+			glPixelStorei(GL_UNPACK_ROW_LENGTH, rowLength);
 
 			if (xoffset == 0 && yoffset == 0 && width == texParamWidth && height == texParamHeight) {
 				glTexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, 0, glFormat, glType, pixels);
