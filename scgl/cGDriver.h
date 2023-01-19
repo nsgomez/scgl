@@ -60,8 +60,9 @@ namespace nSCGL
 		struct TextureStageData
 		{
 			uint32_t coordSrc;
-			uint32_t unknown;
-			bool enabled;
+			void const* textureHandle;
+			bool toBeEnabled;
+			bool currentlyEnabled;
 		};
 
 	private:

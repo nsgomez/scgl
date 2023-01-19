@@ -437,7 +437,7 @@ namespace nSCGL
 		}
 
 		if (gdCap == kGDCapability_Texture2D) {
-			textureStageData[activeTextureStage].enabled = true;
+			textureStageData[activeTextureStage].toBeEnabled = true;
 		}
 	}
 
@@ -450,7 +450,7 @@ namespace nSCGL
 		}
 
 		if (gdCap == kGDCapability_Texture2D) {
-			textureStageData[activeTextureStage].enabled = false;
+			textureStageData[activeTextureStage].toBeEnabled = false;
 		}
 	}
 
