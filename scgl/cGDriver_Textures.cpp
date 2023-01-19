@@ -296,9 +296,9 @@ namespace nSCGL
 		glTexEnvfv(GL_TEXTURE_ENV, pnameMap[gdPname], &paramMap[gdParam]);
 	}
 
-	void cGDriver::SetTexture(GLenum target, GLuint texture) {
-		glActiveTexture(GL_TEXTURE0 + texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
+	void cGDriver::SetTexture(GLuint textureId, GLenum texUnit) {
+		glActiveTexture(GL_TEXTURE0 + texUnit);
+		glBindTexture(GL_TEXTURE_2D, textureId);
 	}
 
 	intptr_t cGDriver::GetTexture(GLuint texture) {
