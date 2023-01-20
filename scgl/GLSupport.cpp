@@ -12,7 +12,7 @@ PFNGLDRAWBUFFERREGIONPROC glDrawBufferRegion = nullptr;
 PFNGLNEWBUFFERREGIONPROC glNewBufferRegion = nullptr;
 PFNGLREADBUFFERREGIONPROC glReadBufferRegion = nullptr;
 
-#define TRY_LOAD(type, name) name = reinterpret_cast<type>(wglGetProcAddress(" ## name ## "))
+#define TRY_LOAD(type, name) name = reinterpret_cast<type>(wglGetProcAddress(#name))
 
 void InitGLSupport(void) {
 	TRY_LOAD(PFNGLCOMPRESSEDTEXIMAGE2DPROC, glCompressedTexImage2D);
