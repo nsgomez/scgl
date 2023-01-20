@@ -53,12 +53,16 @@ namespace nSCGL
 		colorMultiplierG(0.0f),
 		colorMultiplierB(0.0f),
 		colorMultiplierA(0.0f),
+		interleavedFormat(0),
+		interleavedStride(0),
+		interleavedPointer(nullptr),
 		normalArrayEnabled(false),
 		colorArrayEnabled(false),
 		ambientMaterialEnabled(false),
 		diffuseMaterialEnabled(false),
 		activeTextureStage(0),
 		maxTextureUnits(0),
+		textureStageData(),
 		deviceContext(nullptr),
 		bufferRegionFlags(0)
 	{
