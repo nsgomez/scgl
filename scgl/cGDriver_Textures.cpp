@@ -151,11 +151,11 @@ namespace nSCGL
 		glTexParameteri(GL_TEXTURE_2D, texParamNameMap[pname], texParamMap[param]);
 	}
 
-	void cGDriver::TexStage(GLenum texture) {
-		if (videoModes[currentVideoMode].supportsMultitexture || texture != 0) {
-			if (texture < maxTextureUnits) {
-				activeTextureStage = texture;
-				glClientActiveTexture(GL_TEXTURE0 + texture);
+	void cGDriver::TexStage(GLenum texUnit) {
+		if (videoModes[currentVideoMode].supportsMultitexture || texUnit != 0) {
+			if (texUnit < maxTextureUnits) {
+				activeTextureStage = texUnit;
+				glClientActiveTexture(GL_TEXTURE0 + texUnit);
 				return;
 			}
 
@@ -301,8 +301,8 @@ namespace nSCGL
 		glBindTexture(GL_TEXTURE_2D, textureId);
 	}
 
-	intptr_t cGDriver::GetTexture(GLuint texture) {
-		glActiveTexture(GL_TEXTURE0 + texture);
+	intptr_t cGDriver::GetTexture(GLenum texUnit) {
+		glActiveTexture(GL_TEXTURE0 + texUnit);
 
 		int activeTexture;
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &activeTexture);
