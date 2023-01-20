@@ -19,96 +19,116 @@ enum eGDCapability
 	kGDNumCapabilities,
 };
 
-enum eGDTextureStageCombineScaleParamType
+enum class eGDTextureStageCombineScaleParamType
 {
-	kGDTextureStageCombineScaleParamType_RGB,
-	kGDTextureStageCombineScaleParamType_Alpha,
+	RGB,
+	Alpha,
 
-	kGDNumTextureStageCombineScaleParamTypes,
+	ENUM_COUNT,
 };
 
-enum eGDTextureStageCombineScaleParam
+enum class eGDTextureStageCombineScaleParam
 {
-	kGDTextureStageCombineScaleParam_X1,
-	kGDTextureStageCombineScaleParam_X2,
-	kGDTextureStageCombineScaleParam_X4,
+	X1,
+	X2,
+	X4,
 
-	kGDNumTextureStageCombineScaleParams,
+	ENUM_COUNT,
 };
 
-enum eGDTextureStageCombineOperandType
+enum class eGDTextureStageCombineOperandType
 {
-	kGDTextureStageCombineOperandType_Src0RGB,
-	kGDTextureStageCombineOperandType_Src1RGB,
-	kGDTextureStageCombineOperandType_Src2RGB,
-	kGDTextureStageCombineOperandType_Src3RGB,
-	kGDTextureStageCombineOperandType_Src0Alpha,
-	kGDTextureStageCombineOperandType_Src1Alpha,
-	kGDTextureStageCombineOperandType_Src2Alpha,
-	kGDTextureStageCombineOperandType_Src3Alpha,
+	Operand0RGB,
+	Operand1RGB,
+	Operand2RGB,
+	Operand3RGB,
+	Operand0Alpha,
+	Operand1Alpha,
+	Operand2Alpha,
+	Operand3Alpha,
 
-	kGDNumTextureStageCombineOperandTypes,
+	ENUM_COUNT,
 };
 
-enum eGDBlend
+enum class eGDTextureStageCombineOperand
 {
-	kGDBlendTexture,
-	kGDBlendPrevious,
-	kGDBlendConstant,
-	kGDBlendPrimaryColor,
+	Zero,
+	One,
+	SrcColor,
+	OneMinusSrcColor,
+	SrcAlpha,
+	OneMinusSrcAlpha,
+	DstAlpha,
+	OneMinusDstAlpha,
+	DstColor,
+	OneMinusDstColor,
+	SrcAlphaSaturate,
 
-	kGDNumBlends,
+	ENUM_COUNT,
 };
 
-enum eGDTextureStageCombineSourceParamType
+enum class eGDTextureStageCombineSourceParamType
 {
-	kGDTextureStageCombineSourceParamType_Operand0RGB,
-	kGDTextureStageCombineSourceParamType_Operand1RGB,
-	kGDTextureStageCombineSourceParamType_Operand2RGB,
-	kGDTextureStageCombineSourceParamType_Operand3RGB,
-	kGDTextureStageCombineSourceParamType_Operand0Alpha,
-	kGDTextureStageCombineSourceParamType_Operand1Alpha,
-	kGDTextureStageCombineSourceParamType_Operand2Alpha,
-	kGDTextureStageCombineSourceParamType_Operand3Alpha,
+	Src0RGB,
+	Src1RGB,
+	Src2RGB,
+	Src3RGB,
+	Src0Alpha,
+	Src1Alpha,
+	Src2Alpha,
+	Src3Alpha,
 
-	kGDNumTextureStageCombineSourceParamTypes,
+	ENUM_COUNT,
 };
 
-enum eGDTextureStageCombineSourceParam
+enum class eGDTextureStageCombineSourceParam
 {
-	kGDTextureStageCombineSourceParam_Zero,
-	kGDTextureStageCombineSourceParam_One,
-	kGDTextureStageCombineSourceParam_SrcColor,
-	kGDTextureStageCombineSourceParam_OneMinusSrcColor,
-	kGDTextureStageCombineSourceParam_SrcAlpha,
-	kGDTextureStageCombineSourceParam_OneMinusSrcAlpha,
-	kGDTextureStageCombineSourceParam_DstAlpha,
-	kGDTextureStageCombineSourceParam_OneMinusDstAlpha,
-	kGDTextureStageCombineSourceParam_DstColor,
-	kGDTextureStageCombineSourceParam_OneMinusDstColor,
-	kGDTextureStageCombineSourceParam_SrcAlphaSaturate,
+	Texture,
+	Previous,
+	Constant,
+	PrimaryColor,
 
-	kGDNumTextureStageCombineSourceParams,
+	ENUM_COUNT,
 };
 
-enum eGDTextureStageCombineParamType
+enum class eGDTextureStageCombineParamType
 {
-	kGDTextureStageCombineParam_RGB,
-	kGDTextureStageCombineParam_Alpha,
+	RGB,
+	Alpha,
 
-	kGDNumTextureStageCombineParams,
+	ENUM_COUNT,
 };
 
-enum eGDTextureStageCombineModeParam
+enum class eGDTextureStageCombineModeParam
 {
-	kGDTextureStageCombineModeParam_Replace,
-	kGDTextureStageCombineModeParam_Modulate,
-	kGDTextureStageCombineModeParam_Add,
-	kGDTextureStageCombineModeParam_AddSigned,
-	kGDTextureStageCombineModeParam_Interpolate,
-	kGDTextureStageCombineModeParam_Dot3RGB,
+	Replace,
+	Modulate,
+	Add,
+	AddSigned,
+	Interpolate,
+	Dot3RGB,
 
-	kGDNumTextureStageCombineModeParams,
+	ENUM_COUNT,
+};
+
+enum eGDTextureEnvParamType
+{
+	kGDTextureEnvParamType_Mode,
+	kGDTextureEnvParamType_Color,
+
+	kGDNumTextureEnvParamTypes,
+};
+
+enum eGDTextureEnvParam
+{
+	kGDTextureEnvParam_Replace,
+	kGDTextureEnvParam_Modulate,
+	kGDTextureEnvParam_Decal,
+	kGDTextureEnvParam_Blend,
+	kGDTextureEnvParam_Combine,
+	kGDTextureEnvParam_Combine4,
+
+	kGDNumTextureEnvParams,
 };
 
 class cIGZGDriver : public cIGZUnknown
@@ -179,10 +199,10 @@ public:
 	virtual void TexStage(uint32_t) = 0; // cc
 	virtual void TexStageCoord(uint32_t gdTexCoordSource) = 0; // d0
 	virtual void TexStageMatrix(float const*, uint32_t, uint32_t, uint32_t gdTexMatFlags) = 0; // d4
-	virtual void TexStageCombine(eGDTextureStageCombineParamType gdParamType, eGDTextureStageCombineModeParam gdParam) = 0; // d8
+	virtual void TexStageCombine(eGDTextureStageCombineParamType gdParamType, eGDTextureStageCombineModeParam gdParam) = 0; // e4
 	virtual void TexStageCombine(eGDTextureStageCombineSourceParamType gdParamType, eGDTextureStageCombineSourceParam gdParam) = 0; // dc
-	virtual void TexStageCombine(eGDTextureStageCombineOperandType gdParamType, eGDBlend gdBlend) = 0; // e0
-	virtual void TexStageCombine(eGDTextureStageCombineScaleParamType gdParamType, eGDTextureStageCombineScaleParam gdParam) = 0; // e4
+	virtual void TexStageCombine(eGDTextureStageCombineOperandType gdParamType, eGDTextureStageCombineOperand gdBlend) = 0; // e0
+	virtual void TexStageCombine(eGDTextureStageCombineScaleParamType gdParamType, eGDTextureStageCombineScaleParam gdParam) = 0; // d8
 
 	virtual void SetTexture(uint32_t, uint32_t) = 0;
 	virtual intptr_t GetTexture(uint32_t) = 0;

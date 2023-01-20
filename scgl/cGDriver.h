@@ -206,10 +206,10 @@ namespace nSCGL
 		virtual void TexStage(uint32_t) override;
 		virtual void TexStageCoord(uint32_t gdTexCoordSource) override;
 		virtual void TexStageMatrix(float const*, uint32_t, uint32_t, uint32_t gdTexMatFlags) override;
-		virtual void TexStageCombine(eGDTextureStageCombineParamType gdParamType, eGDTextureStageCombineModeParam gdParam) override;
-		virtual void TexStageCombine(eGDTextureStageCombineSourceParamType gdParamType, eGDTextureStageCombineSourceParam gdParam) override;
-		virtual void TexStageCombine(eGDTextureStageCombineOperandType gdParamType, eGDBlend gdBlend) override;
 		virtual void TexStageCombine(eGDTextureStageCombineScaleParamType gdParamType, eGDTextureStageCombineScaleParam gdParam) override;
+		virtual void TexStageCombine(eGDTextureStageCombineOperandType gdParamType, eGDTextureStageCombineOperand gdBlend) override;
+		virtual void TexStageCombine(eGDTextureStageCombineSourceParamType gdParamType, eGDTextureStageCombineSourceParam gdParam) override;
+		virtual void TexStageCombine(eGDTextureStageCombineParamType gdParamType, eGDTextureStageCombineModeParam gdParam) override;
 
 		virtual void SetTexture(uint32_t, uint32_t) override;
 		virtual intptr_t GetTexture(uint32_t) override;

@@ -222,7 +222,7 @@ namespace nSCGL
 		static GLint paramMap[] = { GL_REPLACE, GL_MODULATE, GL_ADD, GL_ADD_SIGNED, GL_INTERPOLATE, GL_DOT3_RGB };
 
 #ifndef NDEBUG
-		if (gdParamType >= sizeof(pnameMap) / sizeof(pnameMap[0]) || gdParam >= sizeof(paramMap) / sizeof(paramMap[0])) {
+		if ((int)gdParamType >= sizeof(pnameMap) / sizeof(pnameMap[0]) || (int)gdParam >= sizeof(paramMap) / sizeof(paramMap[0])) {
 			UNEXPECTED();
 			return;
 		}
@@ -233,10 +233,29 @@ namespace nSCGL
 			return;
 		}
 
-		glTexEnvi(GL_TEXTURE_ENV, pnameMap[gdParamType], paramMap[gdParam]);
+		glTexEnvi(GL_TEXTURE_ENV, pnameMap[(int)gdParamType], paramMap[(int)gdParam]);
 	}
 
 	void cGDriver::TexStageCombine(eGDTextureStageCombineSourceParamType gdParamType, eGDTextureStageCombineSourceParam gdParam) {
+		static GLenum pnameMap[] = { GL_SRC0_RGB, GL_SRC1_RGB, GL_SRC2_RGB, GL_SOURCE3_RGB_NV, GL_SRC0_ALPHA, GL_SRC1_ALPHA, GL_SRC2_ALPHA, GL_SOURCE3_ALPHA_NV };
+		static GLint paramMap[] = { GL_TEXTURE, GL_PREVIOUS, GL_CONSTANT, GL_PRIMARY_COLOR };
+
+#ifndef NDEBUG
+		if ((int)gdParamType >= sizeof(pnameMap) / sizeof(pnameMap[0]) || (int)gdParam >= sizeof(paramMap) / sizeof(paramMap[0])) {
+			UNEXPECTED();
+			return;
+		}
+#endif
+
+		if (!videoModes[currentVideoMode].supportsTextureEnvCombine) {
+			SetLastError(DriverError::INVALID_VALUE);
+			return;
+		}
+
+		glTexEnvi(GL_TEXTURE_ENV, pnameMap[(int)gdParamType], paramMap[(int)gdParam]);
+	}
+
+	void cGDriver::TexStageCombine(eGDTextureStageCombineOperandType gdParamType, eGDTextureStageCombineOperand gdBlend) {
 		static GLenum pnameMap[] = { GL_OPERAND0_RGB, GL_OPERAND1_RGB, GL_OPERAND2_RGB, GL_OPERAND3_RGB_NV, GL_OPERAND0_ALPHA, GL_OPERAND1_ALPHA, GL_OPERAND2_ALPHA, GL_OPERAND3_ALPHA_NV };
 		static GLint paramMap[] = {
 			GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
@@ -244,7 +263,7 @@ namespace nSCGL
 		};
 
 #ifndef NDEBUG
-		if (gdParamType >= sizeof(pnameMap) / sizeof(pnameMap[0]) || gdParam >= sizeof(paramMap) / sizeof(paramMap[0])) {
+		if ((int)gdParamType >= sizeof(pnameMap) / sizeof(pnameMap[0]) || (int)gdBlend >= sizeof(paramMap) / sizeof(paramMap[0])) {
 			UNEXPECTED();
 			return;
 		}
@@ -255,26 +274,7 @@ namespace nSCGL
 			return;
 		}
 
-		glTexEnvi(GL_TEXTURE_ENV, pnameMap[gdParamType], paramMap[gdParam]);
-	}
-
-	void cGDriver::TexStageCombine(eGDTextureStageCombineOperandType gdParamType, eGDBlend gdBlend) {
-		static GLenum pnameMap[] = { GL_SRC0_RGB, GL_SRC1_RGB, GL_SRC2_RGB, GL_SOURCE3_RGB_NV, GL_SRC0_ALPHA, GL_SRC1_ALPHA, GL_SRC2_ALPHA, GL_SOURCE3_ALPHA_NV };
-		static GLint paramMap[] = { GL_TEXTURE, GL_PREVIOUS, GL_CONSTANT, GL_PRIMARY_COLOR };
-
-#ifndef NDEBUG
-		if (gdParamType >= sizeof(pnameMap) / sizeof(pnameMap[0]) || gdBlend >= sizeof(paramMap) / sizeof(paramMap[0])) {
-			UNEXPECTED();
-			return;
-		}
-#endif
-
-		if (!videoModes[currentVideoMode].supportsTextureEnvCombine) {
-			SetLastError(DriverError::INVALID_VALUE);
-			return;
-		}
-
-		glTexEnvi(GL_TEXTURE_ENV, pnameMap[gdParamType], paramMap[gdBlend]);
+		glTexEnvi(GL_TEXTURE_ENV, pnameMap[(int)gdParamType], paramMap[(int)gdBlend]);
 	}
 
 	void cGDriver::TexStageCombine(eGDTextureStageCombineScaleParamType gdPname, eGDTextureStageCombineScaleParam gdParam) {
@@ -282,7 +282,7 @@ namespace nSCGL
 		static GLfloat paramMap[] = { 1.0f, 2.0f, 4.0f };
 
 #ifndef NDEBUG
-		if (gdPname >= sizeof(pnameMap) / sizeof(pnameMap[0]) || gdParam >= sizeof(paramMap) / sizeof(paramMap[0])) {
+		if ((int)gdPname >= sizeof(pnameMap) / sizeof(pnameMap[0]) || (int)gdParam >= sizeof(paramMap) / sizeof(paramMap[0])) {
 			UNEXPECTED();
 			return;
 		}
@@ -293,7 +293,7 @@ namespace nSCGL
 			return;
 		}
 
-		glTexEnvfv(GL_TEXTURE_ENV, pnameMap[gdPname], &paramMap[gdParam]);
+		glTexEnvfv(GL_TEXTURE_ENV, pnameMap[(int)gdPname], &paramMap[(int)gdParam]);
 	}
 
 	void cGDriver::SetTexture(GLuint textureId, GLenum texUnit) {
