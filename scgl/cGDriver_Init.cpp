@@ -1,11 +1,8 @@
 #include <string>
 #include "cGDriver.h"
-
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+#include "GLSupport.h"
 
 #define GLFW_EXPOSE_NATIVE_WIN32
-#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 
@@ -54,14 +51,13 @@ namespace nSCGL
 #endif
 		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
-		glewExperimental = GL_TRUE;
 		window = glfwCreateWindow(640, 480, "GDriverWindow--OpenGL", nullptr, nullptr);
 		glfwMakeContextCurrent(window);
 		glfwHideWindow(window);
-		glewInit();
+		InitGLSupport();
 
 #ifndef NDEBUG
-		if (GLEW_KHR_debug) {
+		if (glDebugMessageCallback != nullptr) {
 			glDebugMessageCallback(LogGLMessage, nullptr);
 			glEnable(GL_DEBUG_OUTPUT);
 		}

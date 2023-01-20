@@ -22,9 +22,9 @@
     <ClCompile Include="scgl\ext\cGDriver_Lighting.cpp" />
     <ClCompile Include="scgl\ext\cGDriver_Snapshot.cpp" />
     <ClCompile Include="scgl\ext\cGDriver_VertexBuffers.cpp" />
+    <ClCompile Include="scgl\GLSupport.cpp" />
     <ClCompile Include="vendor\framework\src\cRZCOMDllDirector.cpp" />
     <ClCompile Include="vendor\framework\src\cRZRefCount.cpp" />
-    <ClCompile Include="vendor\glew\src\glew.c" />
     <ClCompile Include="vendor\glfw\src\context.c" />
     <ClCompile Include="vendor\glfw\src\egl_context.c" />
     <ClCompile Include="vendor\glfw\src\init.c" />
@@ -49,6 +49,7 @@
     <ClInclude Include="scgl\ext\cIGZGDriverLightingExtension.h" />
     <ClInclude Include="scgl\ext\cIGZGDriverVertexBufferExtension.h" />
     <ClInclude Include="scgl\ext\cIGZGSnapshotExtension.h" />
+    <ClInclude Include="scgl\GLSupport.h" />
     <ClInclude Include="scgl\sGDMode.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -1,5 +1,5 @@
 #include "../cGDriver.h"
-#include <GL/glew.h>
+#include "../GLSupport.h"
 
 namespace nSCGL
 {

@@ -1,0 +1,29 @@
+#include "GLSupport.h"
+
+PFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D = nullptr;
+PFNGLCOMPRESSEDTEXSUBIMAGE2DPROC glCompressedTexSubImage2D = nullptr;
+PFNGLACTIVETEXTUREPROC glActiveTexture = nullptr;
+PFNGLCLIENTACTIVETEXTUREPROC glClientActiveTexture = nullptr;
+PFNGLDEBUGMESSAGECALLBACKPROC glDebugMessageCallback = nullptr;
+
+PFNGLBUFFERREGIONENABLEDPROC glBufferRegionEnabled = nullptr;
+PFNGLDELETEBUFFERREGIONPROC glDeleteBufferRegion = nullptr;
+PFNGLDRAWBUFFERREGIONPROC glDrawBufferRegion = nullptr;
+PFNGLNEWBUFFERREGIONPROC glNewBufferRegion = nullptr;
+PFNGLREADBUFFERREGIONPROC glReadBufferRegion = nullptr;
+
+#define TRY_LOAD(type, name) name = reinterpret_cast<type>(wglGetProcAddress(" ## name ## "))
+
+void InitGLSupport(void) {
+	TRY_LOAD(PFNGLCOMPRESSEDTEXIMAGE2DPROC, glCompressedTexImage2D);
+	TRY_LOAD(PFNGLCOMPRESSEDTEXSUBIMAGE2DPROC, glCompressedTexSubImage2D);
+	TRY_LOAD(PFNGLACTIVETEXTUREPROC, glActiveTexture);
+	TRY_LOAD(PFNGLCLIENTACTIVETEXTUREPROC, glClientActiveTexture);
+	TRY_LOAD(PFNGLDEBUGMESSAGECALLBACKPROC, glDebugMessageCallback);
+
+	TRY_LOAD(PFNGLBUFFERREGIONENABLEDPROC, glBufferRegionEnabled);
+	TRY_LOAD(PFNGLDELETEBUFFERREGIONPROC, glDeleteBufferRegion);
+	TRY_LOAD(PFNGLDRAWBUFFERREGIONPROC, glDrawBufferRegion);
+	TRY_LOAD(PFNGLNEWBUFFERREGIONPROC, glNewBufferRegion);
+	TRY_LOAD(PFNGLREADBUFFERREGIONPROC, glReadBufferRegion);
+}

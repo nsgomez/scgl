@@ -22,9 +22,6 @@
     <Filter Include="vendor_src\framework">
       <UniqueIdentifier>{f00e4bb1-3dec-42db-af5f-8debfe15b2ab}</UniqueIdentifier>
     </Filter>
-    <Filter Include="vendor_src\glew">
-      <UniqueIdentifier>{5f73006f-3c82-4709-8d45-34657efa078a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\ext">
       <UniqueIdentifier>{3326f666-4409-4097-adc0-0d221227f697}</UniqueIdentifier>
     </Filter>
@@ -102,9 +99,6 @@
     <ClCompile Include="scgl\cGDriver_Viewport.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="vendor\glew\src\glew.c">
-      <Filter>vendor_src\glew</Filter>
-    </ClCompile>
     <ClCompile Include="scgl\cGDriver_Textures.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -119,6 +113,9 @@
     </ClCompile>
     <ClCompile Include="scgl\ext\cGDriver_Snapshot.cpp">
       <Filter>Source Files\ext</Filter>
+    </ClCompile>
+    <ClCompile Include="scgl\GLSupport.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +142,9 @@
     </ClInclude>
     <ClInclude Include="scgl\ext\cIGZGDriverVertexBufferExtension.h">
       <Filter>Header Files\ext</Filter>
+    </ClInclude>
+    <ClInclude Include="scgl\GLSupport.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

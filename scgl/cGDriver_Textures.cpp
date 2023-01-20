@@ -1,5 +1,5 @@
 #include "cGDriver.h"
-#include <GL/glew.h>
+#include "GLSupport.h"
 #include <GLFW/glfw3.h>
 
 #ifdef NDEBUG
@@ -219,7 +219,7 @@ namespace nSCGL
 
 	void cGDriver::TexStageCombine(eGDTextureStageCombineParamType gdParamType, eGDTextureStageCombineModeParam gdParam) {
 		static GLenum pnameMap[] = { GL_COMBINE_RGB, GL_COMBINE_ALPHA };
-		static GLint paramMap[] = { GL_REPLACE, GL_MODULATE, GL_ADD, GL_ADD_SIGNED, GL_INTERPOLATE, GL_DOT3_RGB_EXT };
+		static GLint paramMap[] = { GL_REPLACE, GL_MODULATE, GL_ADD, GL_ADD_SIGNED, GL_INTERPOLATE, GL_DOT3_RGB };
 
 #ifndef NDEBUG
 		if (gdParamType >= sizeof(pnameMap) / sizeof(pnameMap[0]) || gdParam >= sizeof(paramMap) / sizeof(paramMap[0])) {
