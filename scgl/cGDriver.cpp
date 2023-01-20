@@ -76,7 +76,6 @@ namespace nSCGL
 
 		GLenum mode = drawModeMap[gdMode];
 
-		NOTIMPL();
 		ApplyTextureStages();
 		glDrawArrays(mode, first, count);
 	}
@@ -88,7 +87,6 @@ namespace nSCGL
 		GLenum mode = drawModeMap[gdMode];
 		GLenum type = typeMap[gdType];
 
-		NOTIMPL();
 		ApplyTextureStages();
 		glDrawElements(mode, count, type, indices);
 	}
@@ -134,7 +132,11 @@ namespace nSCGL
 			}
 
 			int colorOffset = VertexFormatElementOffset(format, 5, 0);
-			glColorPointer(sizeof(GLfloat), GL_FLOAT, stride, reinterpret_cast<uint8_t const*>(pointer) + colorOffset);
+
+			// GPU must implement GL_ARB_vertex_array_bgra or GL_EXT_vertex_array_bgra for this to work.
+			// These extensions did not exist when SimCity 4 was released, so their workaround was to
+			// use the CPU to swap the order of color components. That's slow - let's never do that.
+			glColorPointer(GL_BGRA, GL_UNSIGNED_BYTE, stride, reinterpret_cast<uint8_t const*>(pointer) + colorOffset);
 		}
 
 		interleavedFormat = format;
