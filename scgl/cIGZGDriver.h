@@ -1,7 +1,6 @@
 #pragma once
 #include <cIGZString.h>
 #include <cIGZUnknown.h>
-#include "sGDMode.h"
 
 static const uint32_t GZIID_cIGZGDriver = 0xa4554849;
 
@@ -130,6 +129,8 @@ enum eGDTextureEnvParam
 
 	kGDNumTextureEnvParams,
 };
+
+struct sGDMode;
 
 class cIGZGDriver : public cIGZUnknown
 {

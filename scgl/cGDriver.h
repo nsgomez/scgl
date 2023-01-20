@@ -4,6 +4,7 @@
 #include <vector>
 #include <cRZRefCount.h>
 #include "cIGZGDriver.h"
+#include "sGDMode.h"
 #include "ext/cIGZGBufferRegionExtension.h"
 #include "ext/cIGZGDriverLightingExtension.h"
 #include "ext/cIGZGDriverVertexBufferExtension.h"
