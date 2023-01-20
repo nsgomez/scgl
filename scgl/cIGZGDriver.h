@@ -130,6 +130,7 @@ enum eGDTextureEnvParam
 	kGDNumTextureEnvParams,
 };
 
+class cGDCombiner;
 struct sGDMode;
 
 class cIGZGDriver : public cIGZUnknown
@@ -209,7 +210,7 @@ public:
 	virtual intptr_t GetTexture(uint32_t) = 0;
 	virtual intptr_t CreateTexture(uint32_t gdInternalTexFormat, uint32_t, uint32_t, uint32_t, uint32_t gdTexHintFlags) = 0;
 	virtual void LoadTextureLevel(uint32_t, int32_t, int32_t, int32_t, int32_t, int32_t, uint32_t gdTexFormat, uint32_t gdType, uint32_t, void const*) = 0;
-	virtual void SetCombiner(intptr_t gdCombiner, uint32_t) = 0;
+	virtual void SetCombiner(cGDCombiner const& combiner, uint32_t) = 0;
 
 	virtual uint32_t CountVideoModes(void) const = 0; // 0xfc
 	virtual void GetVideoModeInfo(uint32_t, sGDMode& gdMode) = 0;

@@ -1,4 +1,5 @@
 #include "cGDriver.h"
+#include "cGDCombiner.h"
 #include "GLSupport.h"
 #include <GLFW/glfw3.h>
 
@@ -367,7 +368,37 @@ namespace nSCGL
 		}
 	}
 
-	void cGDriver::SetCombiner(intptr_t gdCombiner, uint32_t) {
-		NOTIMPL();
+	void cGDriver::SetCombiner(cGDCombiner const& combiner, uint32_t texUnit) {
+		static eGDTextureStageCombineOperand operandMap[] = {
+			eGDTextureStageCombineOperand::SrcColor,
+			eGDTextureStageCombineOperand::OneMinusSrcColor,
+			eGDTextureStageCombineOperand::SrcAlpha,
+			eGDTextureStageCombineOperand::OneMinusSrcAlpha,
+			eGDTextureStageCombineOperand::SrcAlpha,
+			eGDTextureStageCombineOperand::OneMinusSrcAlpha,
+			eGDTextureStageCombineOperand::SrcAlpha,
+			eGDTextureStageCombineOperand::OneMinusSrcAlpha,
+		};
+
+		TexStage(texUnit);
+		TexEnv(0, kGDTextureEnvParamType_Mode, kGDTextureEnvParam_Combine);
+
+		TexStageCombine(eGDTextureStageCombineParamType::RGB, (eGDTextureStageCombineModeParam)combiner.RGBCombineMode);
+		TexStageCombine(eGDTextureStageCombineScaleParamType::RGB, (eGDTextureStageCombineScaleParam)combiner.RGBScale);
+		TexStageCombine(eGDTextureStageCombineOperandType::Operand0RGB, (eGDTextureStageCombineOperand)operandMap[combiner.RGBParams[0].OperandType]);
+		TexStageCombine(eGDTextureStageCombineSourceParamType::Src0RGB, (eGDTextureStageCombineSourceParam)combiner.RGBParams[0].SourceType);
+		TexStageCombine(eGDTextureStageCombineOperandType::Operand1RGB, (eGDTextureStageCombineOperand)operandMap[combiner.RGBParams[1].OperandType]);
+		TexStageCombine(eGDTextureStageCombineSourceParamType::Src1RGB, (eGDTextureStageCombineSourceParam)combiner.RGBParams[1].SourceType);
+		TexStageCombine(eGDTextureStageCombineOperandType::Operand2RGB, (eGDTextureStageCombineOperand)operandMap[combiner.RGBParams[2].OperandType]);
+		TexStageCombine(eGDTextureStageCombineSourceParamType::Src2RGB, (eGDTextureStageCombineSourceParam)combiner.RGBParams[2].SourceType);
+
+		TexStageCombine(eGDTextureStageCombineScaleParamType::Alpha, (eGDTextureStageCombineScaleParam)combiner.AlphaScale);
+		TexStageCombine(eGDTextureStageCombineParamType::Alpha, (eGDTextureStageCombineModeParam)combiner.AlphaCombineMode);
+		TexStageCombine(eGDTextureStageCombineOperandType::Operand0Alpha, (eGDTextureStageCombineOperand)operandMap[combiner.AlphaParams[0].OperandType]);
+		TexStageCombine(eGDTextureStageCombineSourceParamType::Src0Alpha, (eGDTextureStageCombineSourceParam)combiner.AlphaParams[0].SourceType);
+		TexStageCombine(eGDTextureStageCombineOperandType::Operand1Alpha, (eGDTextureStageCombineOperand)operandMap[combiner.AlphaParams[1].OperandType]);
+		TexStageCombine(eGDTextureStageCombineSourceParamType::Src1Alpha, (eGDTextureStageCombineSourceParam)combiner.AlphaParams[1].SourceType);
+		TexStageCombine(eGDTextureStageCombineOperandType::Operand2Alpha, (eGDTextureStageCombineOperand)operandMap[combiner.AlphaParams[2].OperandType]);
+		TexStageCombine(eGDTextureStageCombineSourceParamType::Src2Alpha, (eGDTextureStageCombineSourceParam)combiner.AlphaParams[2].SourceType);
 	}
 }

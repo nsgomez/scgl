@@ -216,7 +216,7 @@ namespace nSCGL
 		virtual intptr_t GetTexture(uint32_t) override;
 		virtual intptr_t CreateTexture(uint32_t gdInternalTexFormat, uint32_t, uint32_t, uint32_t, uint32_t gdTexHintFlags) override;
 		virtual void LoadTextureLevel(uint32_t, int32_t, int32_t, int32_t, int32_t, int32_t, uint32_t gdTexFormat, uint32_t gdType, uint32_t, void const*) override;
-		virtual void SetCombiner(intptr_t gdCombiner, uint32_t) override;
+		virtual void SetCombiner(cGDCombiner const& combiner, uint32_t) override;
 
 		virtual uint32_t CountVideoModes(void) const override;
 		virtual void GetVideoModeInfo(uint32_t dwIndex, sGDMode& gdMode) override;

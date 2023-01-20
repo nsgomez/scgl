@@ -42,6 +42,7 @@
     <ClCompile Include="vendor\glfw\src\window.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="scgl\cGDCombiner.h" />
     <ClInclude Include="scgl\cGDriver.h" />
     <ClInclude Include="scgl\cIGZBuffer.h" />
     <ClInclude Include="scgl\cIGZGDriver.h" />
