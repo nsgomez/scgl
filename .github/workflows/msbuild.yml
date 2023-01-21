@@ -30,4 +30,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: SGCL-${{ matrix.configuration }}
-        path: ${{ matrix.configuration }}\\SGCL.dll
+        path: ${{ matrix.configuration }}\SGCL.dll
