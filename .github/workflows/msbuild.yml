@@ -29,6 +29,5 @@ jobs:
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: SGCL-${{ matrix.configuration }}
-        path: |
-          ${{ matrix.configuration }}/SGCL.dll
+        name: SCGL-${{ matrix.configuration }}
+        path: ${{ matrix.configuration }}/SCGL.dll
