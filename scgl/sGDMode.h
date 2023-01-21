@@ -7,7 +7,10 @@ struct sGDMode
 	uint32_t width;  // 4
 	uint32_t height; // 8
 	uint32_t depth;  // c // dwRGBBitCount in DDSURFACEDESC2 parlance
-	uint32_t __unknown1[4];            // 10, 14, 18, 1c
+	uint32_t alphaColorMask;           // 10
+	uint32_t redColorMask;             // 14
+	uint32_t greenColorMask;           // 18
+	uint32_t blueColorMask;            // 1c
 	bool isFullscreen;                 // 20
 	bool supportsStencilBuffer;        // 21
 	bool __unknown2;                   // 22

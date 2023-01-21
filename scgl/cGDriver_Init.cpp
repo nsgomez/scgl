@@ -134,6 +134,19 @@ namespace nSCGL
 				depth += 8;
 			}
 
+			if (depth > 16) {
+				tempMode.alphaColorMask = 0xff000000;
+				tempMode.redColorMask = 0x00ff0000;
+				tempMode.greenColorMask = 0x0000ff00;
+				tempMode.blueColorMask = 0x000000ff;
+			}
+			else {
+				tempMode.alphaColorMask = 0x1;
+				tempMode.redColorMask = 0xf800;
+				tempMode.greenColorMask = 0x7c0;
+				tempMode.blueColorMask = 0x3e;
+			}
+
 			tempMode.index = i++;
 			tempMode.width = modes[i].width;
 			tempMode.height = modes[i].height;
