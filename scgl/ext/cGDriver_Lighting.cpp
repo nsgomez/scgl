@@ -18,13 +18,7 @@ namespace nSCGL
 
 	void cGDriver::LightColor(uint32_t lightIndex, uint32_t gdParam, float const* color) {
 		static GLenum colorParamMap[] = { GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR };
-
-#ifndef NDEBUG
-		if (gdParam >= sizeof(colorParamMap) / sizeof(colorParamMap[0])) {
-			UNEXPECTED();
-			return;
-		}
-#endif
+		SIZE_CHECK(gdParam, colorParamMap);
 
 		GLenum param = colorParamMap[gdParam];
 		glLightfv(GL_LIGHT0 + lightIndex, param, color);
@@ -55,13 +49,7 @@ namespace nSCGL
 
 	void cGDriver::MaterialColor(uint32_t gdParam, float const* color) {
 		static GLenum materialParamMap[] = { GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR, GL_EMISSION, GL_SHININESS };
-
-#ifndef NDEBUG
-		if (gdParam >= sizeof(materialParamMap) / sizeof(materialParamMap[0])) {
-			UNEXPECTED();
-			return;
-		}
-#endif
+		SIZE_CHECK(gdParam, materialParamMap);
 
 		GLenum param = materialParamMap[gdParam];
 		glMaterialfv(GL_FRONT, param, color);

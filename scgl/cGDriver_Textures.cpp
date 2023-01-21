@@ -117,24 +117,15 @@ namespace nSCGL
 
 	void cGDriver::TexEnv(GLenum target, GLenum pname, GLint gdParam) {
 		GLint paramMap[] = { GL_REPLACE, GL_MODULATE, GL_DECAL, GL_BLEND, GL_COMBINE, GL_COMBINE4_NV };
-#ifndef NDEBUG
-		if (pname >= sizeof(texEnvParamMap) / sizeof(texEnvParamMap[0]) || gdParam >= sizeof(paramMap) / sizeof(paramMap[0])) {
-			UNEXPECTED();
-			return;
-		}
-#endif
+
+		SIZE_CHECK(pname, texEnvParamMap);
+		SIZE_CHECK(gdParam, paramMap);
 
 		glTexEnvi(GL_TEXTURE_ENV, texEnvParamMap[pname], paramMap[gdParam]);
 	}
 
 	void cGDriver::TexEnv(GLenum target, GLenum pname, GLfloat const* params) {
-#ifndef NDEBUG
-		if (pname >= sizeof(texEnvParamMap) / sizeof(texEnvParamMap[0])) {
-			UNEXPECTED();
-			return;
-		}
-#endif
-
+		SIZE_CHECK(pname, texEnvParamMap);
 		glTexEnvfv(GL_TEXTURE_ENV, texEnvParamMap[pname], params);
 	}
 
@@ -142,12 +133,8 @@ namespace nSCGL
 		static GLenum texParamNameMap[] = { GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T };
 		static GLenum texParamMap[] = { GL_NEAREST, GL_LINEAR, GL_CLAMP, GL_REPEAT, GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR };
 
-#ifndef NDEBUG
-		if (pname >= sizeof(texParamNameMap) / sizeof(texParamNameMap[0]) || param >= sizeof(texParamMap) / sizeof(texParamMap[0])) {
-			UNEXPECTED();
-			return;
-		}
-#endif
+		SIZE_CHECK(pname, texParamNameMap);
+		SIZE_CHECK(param, texParamMap);
 
 		glTexParameteri(GL_TEXTURE_2D, texParamNameMap[pname], texParamMap[param]);
 	}
@@ -222,12 +209,8 @@ namespace nSCGL
 		static GLenum pnameMap[] = { GL_COMBINE_RGB, GL_COMBINE_ALPHA };
 		static GLint paramMap[] = { GL_REPLACE, GL_MODULATE, GL_ADD, GL_ADD_SIGNED, GL_INTERPOLATE, GL_DOT3_RGB };
 
-#ifndef NDEBUG
-		if ((int)gdParamType >= sizeof(pnameMap) / sizeof(pnameMap[0]) || (int)gdParam >= sizeof(paramMap) / sizeof(paramMap[0])) {
-			UNEXPECTED();
-			return;
-		}
-#endif
+		SIZE_CHECK((int)gdParamType, pnameMap);
+		SIZE_CHECK((int)gdParam, paramMap);
 
 		if (!videoModes[currentVideoMode].supportsTextureEnvCombine) {
 			SetLastError(DriverError::INVALID_VALUE);
@@ -241,12 +224,8 @@ namespace nSCGL
 		static GLenum pnameMap[] = { GL_SRC0_RGB, GL_SRC1_RGB, GL_SRC2_RGB, GL_SOURCE3_RGB_NV, GL_SRC0_ALPHA, GL_SRC1_ALPHA, GL_SRC2_ALPHA, GL_SOURCE3_ALPHA_NV };
 		static GLint paramMap[] = { GL_TEXTURE, GL_PREVIOUS, GL_CONSTANT, GL_PRIMARY_COLOR };
 
-#ifndef NDEBUG
-		if ((int)gdParamType >= sizeof(pnameMap) / sizeof(pnameMap[0]) || (int)gdParam >= sizeof(paramMap) / sizeof(paramMap[0])) {
-			UNEXPECTED();
-			return;
-		}
-#endif
+		SIZE_CHECK((int)gdParamType, pnameMap);
+		SIZE_CHECK((int)gdParam, paramMap);
 
 		if (!videoModes[currentVideoMode].supportsTextureEnvCombine) {
 			SetLastError(DriverError::INVALID_VALUE);
@@ -263,12 +242,8 @@ namespace nSCGL
 			GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA_SATURATE
 		};
 
-#ifndef NDEBUG
-		if ((int)gdParamType >= sizeof(pnameMap) / sizeof(pnameMap[0]) || (int)gdBlend >= sizeof(paramMap) / sizeof(paramMap[0])) {
-			UNEXPECTED();
-			return;
-		}
-#endif
+		SIZE_CHECK((int)gdParamType, pnameMap);
+		SIZE_CHECK((int)gdBlend, paramMap);
 
 		if (!videoModes[currentVideoMode].supportsTextureEnvCombine) {
 			SetLastError(DriverError::INVALID_VALUE);
@@ -282,12 +257,8 @@ namespace nSCGL
 		static GLenum pnameMap[] = { GL_RGB_SCALE, GL_ALPHA_SCALE };
 		static GLfloat paramMap[] = { 1.0f, 2.0f, 4.0f };
 
-#ifndef NDEBUG
-		if ((int)gdPname >= sizeof(pnameMap) / sizeof(pnameMap[0]) || (int)gdParam >= sizeof(paramMap) / sizeof(paramMap[0])) {
-			UNEXPECTED();
-			return;
-		}
-#endif
+		SIZE_CHECK((int)gdPname, pnameMap);
+		SIZE_CHECK((int)gdParam, paramMap);
 
 		if (!videoModes[currentVideoMode].supportsTextureEnvCombine) {
 			SetLastError(DriverError::INVALID_VALUE);

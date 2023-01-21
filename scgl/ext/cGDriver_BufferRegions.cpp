@@ -9,13 +9,7 @@ namespace nSCGL
 
 	uint32_t cGDriver::NewBufferRegion(int32_t gdBufferRegionType) {
 		static GLenum regionTypeMap[] = { GL_KTX_BACK_REGION, GL_KTX_Z_REGION, GL_KTX_STENCIL_REGION };
-
-#ifndef NDEBUG
-		if (gdBufferRegionType >= sizeof(regionTypeMap) / sizeof(regionTypeMap[0])) {
-			UNEXPECTED();
-			return 0;
-		}
-#endif
+		SIZE_CHECK_RETVAL(gdBufferRegionType, regionTypeMap, 0);
 
 		GLuint result = glNewBufferRegion(regionTypeMap[gdBufferRegionType]);
 		if (result != 0) {
