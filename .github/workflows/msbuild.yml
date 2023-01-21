@@ -25,3 +25,9 @@ jobs:
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=${{ matrix.configuration }}
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: SGCL-${{ matrix.configuration }}
+        path: ${{ matrix.configuration }}\\SGCL.dll
