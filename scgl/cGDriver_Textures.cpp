@@ -203,6 +203,8 @@ namespace nSCGL
 		if ((gdTexMatFlags & 1) == 0 || (unknown0 > 3 && (unknown1 > 3 || (gdTexMatFlags & 2) == 0))) {
 			glLoadMatrixf(matrix);
 		}
+
+		NOTIMPL();
 	}
 
 	void cGDriver::TexStageCombine(eGDTextureStageCombineParamType gdParamType, eGDTextureStageCombineModeParam gdParam) {
