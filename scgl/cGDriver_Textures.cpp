@@ -140,7 +140,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::TexStage(GLenum texUnit) {
-		if (videoModes[currentVideoMode].supportsMultitexture || texUnit != 0) {
+		if (videoModes[currentVideoMode].supportsMultitexture || texUnit == 0) {
 			if (texUnit < maxTextureUnits) {
 				activeTextureStage = texUnit;
 				glClientActiveTexture(GL_TEXTURE0 + texUnit);
