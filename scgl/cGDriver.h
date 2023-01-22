@@ -27,6 +27,9 @@ extern FILE* gLogFile;
 
 namespace nSCGL
 {
+	constexpr size_t MAX_BUFFER_REGIONS = sizeof(uint8_t) * 8U;
+	constexpr size_t MAX_TEXTURE_UNITS = 8;
+
 	class cGDriver final :
 		public cIGZGDriver,
 		public cIGZGBufferRegionExtension,
@@ -91,7 +94,7 @@ namespace nSCGL
 		uint32_t maxTextureUnits; // 0x28
 		// We're still using the GL fixed function pipeline,
 		// so we shouldn't have a high number of texture units.
-		TextureStageData textureStageData[8]; // 0x2c?
+		TextureStageData textureStageData[MAX_TEXTURE_UNITS]; // 0x2c?
 
 		bool normalArrayEnabled, colorArrayEnabled;          // 0x81, 0x82
 		bool ambientMaterialEnabled, diffuseMaterialEnabled; // 0xa8, 0xa9
@@ -101,9 +104,10 @@ namespace nSCGL
 		int32_t interleavedStride;      // 0x88
 		void const* interleavedPointer; // 0x8c
 
-		// We're not expecting to use a lot of buffer regions simultaneously, so we'll use a
-		// 32-bit mask to indicate which regions are allocated and free.
-		uint32_t bufferRegionFlags;
+		// We're not expecting to use a lot of buffer regions simultaneously, so we'll use an
+		// 8-bit mask to indicate which regions are allocated and free.
+		uint8_t bufferRegionFlags;
+		void* bufferRegionHandles[MAX_BUFFER_REGIONS];
 
 		void* deviceContext;
 
@@ -111,7 +115,8 @@ namespace nSCGL
 		void SetLastError(DriverError err);
 		void SetLightingParameters();
 		void ApplyTextureStages();
-		int32_t InitializeVideoModeVector(void);
+		int FindFreeBufferRegionIndex(void);
+		int InitializeVideoModeVector(void);
 
 	public:
 		cGDriver();
