@@ -111,12 +111,12 @@ namespace nSCGL
 
 		// TODO: do we actually need to check all these extensions or are they all part of the OpenGL 3.0 core profile?
 		tempMode.supportsStencilBuffer = true;
-		tempMode.supportsTextureCompression = true;
 		tempMode.supportsMultitexture = true;
 		tempMode.supportsTextureEnvCombine = true;
 		tempMode.supportsNvTextureEnvCombine4 = true;
 		tempMode.supportsFogCoord = true;
 		tempMode.supportsDxtTextures = true;
+		tempMode.textureStageCount = maxTextureUnits;
 
 		// TODO: what are these flags for and why does the game's OpenGL driver set them?
 		tempMode.__unknown2 = true;
