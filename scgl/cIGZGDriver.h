@@ -49,7 +49,7 @@ enum class eGDTextureStageCombineOperandType
 	ENUM_COUNT,
 };
 
-enum class eGDTextureStageCombineOperand
+enum class eGDBlend
 {
 	Zero,
 	One,
@@ -203,7 +203,7 @@ public:
 	virtual void TexStageMatrix(float const*, uint32_t, uint32_t, uint32_t gdTexMatFlags) = 0; // d4
 	virtual void TexStageCombine(eGDTextureStageCombineParamType gdParamType, eGDTextureStageCombineModeParam gdParam) = 0; // e4
 	virtual void TexStageCombine(eGDTextureStageCombineSourceParamType gdParamType, eGDTextureStageCombineSourceParam gdParam) = 0; // dc
-	virtual void TexStageCombine(eGDTextureStageCombineOperandType gdParamType, eGDTextureStageCombineOperand gdBlend) = 0; // e0
+	virtual void TexStageCombine(eGDTextureStageCombineOperandType gdParamType, eGDBlend gdBlend) = 0; // e0
 	virtual void TexStageCombine(eGDTextureStageCombineScaleParamType gdParamType, eGDTextureStageCombineScaleParam gdParam) = 0; // d8
 
 	virtual void SetTexture(uint32_t, uint32_t) = 0;

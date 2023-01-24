@@ -25,6 +25,7 @@ namespace nSCGL
 	};
 
 	extern GLenum typeMap[16];
+	extern GLenum glBlendMap[11];
 
 	void cGDriver::ApplyTextureStages() {
 		for (uint32_t i = 0; i < maxTextureUnits; i++) {
@@ -237,22 +238,18 @@ namespace nSCGL
 		glTexEnvi(GL_TEXTURE_ENV, pnameMap[(int)gdParamType], paramMap[(int)gdParam]);
 	}
 
-	void cGDriver::TexStageCombine(eGDTextureStageCombineOperandType gdParamType, eGDTextureStageCombineOperand gdBlend) {
+	void cGDriver::TexStageCombine(eGDTextureStageCombineOperandType gdParamType, eGDBlend gdBlend) {
 		static GLenum pnameMap[] = { GL_OPERAND0_RGB, GL_OPERAND1_RGB, GL_OPERAND2_RGB, GL_OPERAND3_RGB_NV, GL_OPERAND0_ALPHA, GL_OPERAND1_ALPHA, GL_OPERAND2_ALPHA, GL_OPERAND3_ALPHA_NV };
-		static GLint paramMap[] = {
-			GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
-			GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA_SATURATE
-		};
 
 		SIZE_CHECK((int)gdParamType, pnameMap);
-		SIZE_CHECK((int)gdBlend, paramMap);
+		SIZE_CHECK((int)gdBlend, glBlendMap);
 
 		if (!videoModes[currentVideoMode].supportsTextureEnvCombine) {
 			SetLastError(DriverError::INVALID_VALUE);
 			return;
 		}
 
-		glTexEnvi(GL_TEXTURE_ENV, pnameMap[(int)gdParamType], paramMap[(int)gdBlend]);
+		glTexEnvi(GL_TEXTURE_ENV, pnameMap[(int)gdParamType], glBlendMap[(int)gdBlend]);
 	}
 
 	void cGDriver::TexStageCombine(eGDTextureStageCombineScaleParamType gdPname, eGDTextureStageCombineScaleParam gdParam) {
@@ -342,18 +339,18 @@ namespace nSCGL
 	}
 
 	void cGDriver::SetCombiner(cGDCombiner const& combiner, uint32_t texUnit) {
-		static eGDTextureStageCombineOperand colorOperandMap[] = {
-			eGDTextureStageCombineOperand::SrcColor,
-			eGDTextureStageCombineOperand::OneMinusSrcColor,
-			eGDTextureStageCombineOperand::SrcAlpha,
-			eGDTextureStageCombineOperand::OneMinusSrcAlpha,
+		static eGDBlend colorOperandMap[] = {
+			eGDBlend::SrcColor,
+			eGDBlend::OneMinusSrcColor,
+			eGDBlend::SrcAlpha,
+			eGDBlend::OneMinusSrcAlpha,
 		};
 
-		static eGDTextureStageCombineOperand alphaOperandMap[] = {
-			eGDTextureStageCombineOperand::SrcAlpha,
-			eGDTextureStageCombineOperand::OneMinusSrcAlpha,
-			eGDTextureStageCombineOperand::SrcAlpha,
-			eGDTextureStageCombineOperand::OneMinusSrcAlpha,
+		static eGDBlend alphaOperandMap[] = {
+			eGDBlend::SrcAlpha,
+			eGDBlend::OneMinusSrcAlpha,
+			eGDBlend::SrcAlpha,
+			eGDBlend::OneMinusSrcAlpha,
 		};
 
 		TexStage(texUnit);
@@ -361,20 +358,20 @@ namespace nSCGL
 
 		TexStageCombine(eGDTextureStageCombineParamType::RGB, (eGDTextureStageCombineModeParam)combiner.RGBCombineMode);
 		TexStageCombine(eGDTextureStageCombineScaleParamType::RGB, (eGDTextureStageCombineScaleParam)combiner.RGBScale);
-		TexStageCombine(eGDTextureStageCombineOperandType::Operand0RGB, (eGDTextureStageCombineOperand)colorOperandMap[combiner.RGBParams[0].OperandType]);
+		TexStageCombine(eGDTextureStageCombineOperandType::Operand0RGB, (eGDBlend)colorOperandMap[combiner.RGBParams[0].OperandType]);
 		TexStageCombine(eGDTextureStageCombineSourceParamType::Src0RGB, (eGDTextureStageCombineSourceParam)combiner.RGBParams[0].SourceType);
-		TexStageCombine(eGDTextureStageCombineOperandType::Operand1RGB, (eGDTextureStageCombineOperand)colorOperandMap[combiner.RGBParams[1].OperandType]);
+		TexStageCombine(eGDTextureStageCombineOperandType::Operand1RGB, (eGDBlend)colorOperandMap[combiner.RGBParams[1].OperandType]);
 		TexStageCombine(eGDTextureStageCombineSourceParamType::Src1RGB, (eGDTextureStageCombineSourceParam)combiner.RGBParams[1].SourceType);
-		TexStageCombine(eGDTextureStageCombineOperandType::Operand2RGB, (eGDTextureStageCombineOperand)colorOperandMap[combiner.RGBParams[2].OperandType]);
+		TexStageCombine(eGDTextureStageCombineOperandType::Operand2RGB, (eGDBlend)colorOperandMap[combiner.RGBParams[2].OperandType]);
 		TexStageCombine(eGDTextureStageCombineSourceParamType::Src2RGB, (eGDTextureStageCombineSourceParam)combiner.RGBParams[2].SourceType);
 
 		TexStageCombine(eGDTextureStageCombineScaleParamType::Alpha, (eGDTextureStageCombineScaleParam)combiner.AlphaScale);
 		TexStageCombine(eGDTextureStageCombineParamType::Alpha, (eGDTextureStageCombineModeParam)combiner.AlphaCombineMode);
-		TexStageCombine(eGDTextureStageCombineOperandType::Operand0Alpha, (eGDTextureStageCombineOperand)alphaOperandMap[combiner.AlphaParams[0].OperandType]);
+		TexStageCombine(eGDTextureStageCombineOperandType::Operand0Alpha, (eGDBlend)alphaOperandMap[combiner.AlphaParams[0].OperandType]);
 		TexStageCombine(eGDTextureStageCombineSourceParamType::Src0Alpha, (eGDTextureStageCombineSourceParam)combiner.AlphaParams[0].SourceType);
-		TexStageCombine(eGDTextureStageCombineOperandType::Operand1Alpha, (eGDTextureStageCombineOperand)alphaOperandMap[combiner.AlphaParams[1].OperandType]);
+		TexStageCombine(eGDTextureStageCombineOperandType::Operand1Alpha, (eGDBlend)alphaOperandMap[combiner.AlphaParams[1].OperandType]);
 		TexStageCombine(eGDTextureStageCombineSourceParamType::Src1Alpha, (eGDTextureStageCombineSourceParam)combiner.AlphaParams[1].SourceType);
-		TexStageCombine(eGDTextureStageCombineOperandType::Operand2Alpha, (eGDTextureStageCombineOperand)alphaOperandMap[combiner.AlphaParams[2].OperandType]);
+		TexStageCombine(eGDTextureStageCombineOperandType::Operand2Alpha, (eGDBlend)alphaOperandMap[combiner.AlphaParams[2].OperandType]);
 		TexStageCombine(eGDTextureStageCombineSourceParamType::Src2Alpha, (eGDTextureStageCombineSourceParam)combiner.AlphaParams[2].SourceType);
 	}
 }
