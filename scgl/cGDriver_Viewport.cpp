@@ -51,6 +51,7 @@ namespace nSCGL
 			SetWindowLong(hwnd, GWL_WNDPROC, reinterpret_cast<LONG>(hwndProc));
 
 			glfwSetWindowSize(window, windowWidth, windowHeight);
+			glfwSwapInterval(0);
 			glfwShowWindow(window);
 
 			if (newMode.isFullscreen) {
