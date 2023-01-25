@@ -37,6 +37,9 @@ namespace nSCGL
 					}
 
 					glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+					glActiveTexture(GL_TEXTURE0 + i);
+					glDisable(GL_TEXTURE_2D);
+
 					texStage.currentlyEnabled = false;
 					texStage.textureHandle = nullptr;
 				}
@@ -48,6 +51,9 @@ namespace nSCGL
 
 				if (!texStage.currentlyEnabled) {
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+					glActiveTexture(GL_TEXTURE0 + i);
+					glEnable(GL_TEXTURE_2D);
+
 					texStage.currentlyEnabled = true;
 				}
 
@@ -57,6 +63,11 @@ namespace nSCGL
 					texStage.textureHandle = textureHandle;
 				}
 			}
+		}
+
+		glActiveTexture(GL_TEXTURE0 + activeTextureStage);
+		if (videoModes[currentVideoMode].supportsMultitexture) {
+			glClientActiveTexture(GL_TEXTURE0 + activeTextureStage);
 		}
 	}
 
@@ -145,6 +156,7 @@ namespace nSCGL
 			if (texUnit < maxTextureUnits) {
 				activeTextureStage = texUnit;
 				glClientActiveTexture(GL_TEXTURE0 + texUnit);
+				glActiveTexture(GL_TEXTURE0 + texUnit);
 				return;
 			}
 
@@ -270,6 +282,7 @@ namespace nSCGL
 	void cGDriver::SetTexture(GLuint textureId, GLenum texUnit) {
 		glActiveTexture(GL_TEXTURE0 + texUnit);
 		glBindTexture(GL_TEXTURE_2D, textureId);
+		glActiveTexture(GL_TEXTURE0 + activeTextureStage);
 	}
 
 	intptr_t cGDriver::GetTexture(GLenum texUnit) {
@@ -277,6 +290,8 @@ namespace nSCGL
 
 		int activeTexture;
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &activeTexture);
+
+		glActiveTexture(GL_TEXTURE0 + activeTextureStage);
 		return activeTexture;
 	}
 
