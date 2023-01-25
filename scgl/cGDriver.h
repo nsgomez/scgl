@@ -66,6 +66,14 @@ namespace nSCGL
 			bool currentlyEnabled;
 		};
 
+		struct VertexBufferData
+		{
+			uint8_t* handle;
+			uint32_t size;
+			uint32_t count;
+			bool locked;
+		};
+
 	private:
 		GLFWwindow* window;
 		uint32_t glfwExtensionCount;
@@ -105,6 +113,8 @@ namespace nSCGL
 		// 32-bit mask to indicate which regions are allocated and free.
 		uint32_t bufferRegionFlags;
 
+		std::vector<VertexBufferData> vertexBuffers;
+		bool isVertexBufferActive;
 		void* deviceContext;
 
 	private:
@@ -112,6 +122,11 @@ namespace nSCGL
 		void SetLightingParameters();
 		void ApplyTextureStages();
 		int32_t InitializeVideoModeVector(void);
+
+		uint32_t AllocateVertexBuffer();
+		uint32_t FindFreeVertexBuffer();
+		void MakeVertexBufferActive(uint32_t id);
+		void DeactivateVertexBuffer();
 
 	public:
 		cGDriver();
@@ -245,14 +260,14 @@ namespace nSCGL
 		virtual bool Punt(uint32_t, void*) override;
 
 	public:
-		virtual char const* GetVertexBufferName(uint32_t gdVertexFormat) override;
+		virtual uint32_t GetVertexBufferName(uint32_t gdVertexFormat) override;
 		virtual uint32_t VertexBufferType(uint32_t) override;
 		virtual uint32_t MaxVertices(uint32_t) override;
-		virtual uint32_t GetVertices(int32_t, bool) override;
-		virtual uint32_t ContinueVertices(uint32_t, uint32_t) override;
+		virtual void* GetVertices(uint32_t, uint32_t) override;
+		virtual void* ContinueVertices(uint32_t, uint32_t) override;
 		virtual void ReleaseVertices(uint32_t) override;
-		virtual void DrawPrims(uint32_t, uint32_t gdPrimType, void*, uint32_t) override;
-		virtual void DrawPrimsIndexed(uint32_t, uint32_t gdPrimType, uint32_t, uint16_t*, void*, uint32_t) override;
+		virtual void DrawPrims(uint32_t, uint32_t gdPrimType) override;
+		virtual void DrawPrimsIndexed(uint32_t, uint32_t gdPrimType, uint32_t, uint16_t*) override;
 		virtual void Reset(void) override;
 
 	public:

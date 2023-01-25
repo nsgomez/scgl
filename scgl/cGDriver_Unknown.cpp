@@ -29,10 +29,9 @@ namespace nSCGL
 			*ppvObj = static_cast<cIGZGDriverLightingExtension*>(this);
 			break;
 
-		/*case GZIID_cIGZGDriverVertexBufferExtension:
-			MessageBoxA(NULL, "cIGZGDriverVertexBufferExtension", "cGDriver::QueryInterface", 0);
+		case GZIID_cIGZGDriverVertexBufferExtension:
 			*ppvObj = static_cast<cIGZGDriverVertexBufferExtension*>(this);
-			break;*/
+			break;
 
 		case GZIID_cIGZGSnapshotExtension:
 			*ppvObj = static_cast<cIGZGSnapshotExtension*>(this);

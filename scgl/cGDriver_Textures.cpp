@@ -180,32 +180,26 @@ namespace nSCGL
 			return;
 		}
 
-		if ((gdTexMatFlags & 3) == 1 && unknown0 == 4 && unknown1 == 2) {
-			GLfloat replacementMatrix[16];
-			GLfloat* replacementPtr = replacementMatrix;
-			for (int i = 0; i < 16; i++) {
-				*replacementPtr = *(matrix++);
-			}
-
-			replacementMatrix[2] = 0.0f;
-			replacementMatrix[6] = 0.0f;
-			replacementMatrix[10] = 1.0f;
-			replacementMatrix[14] = 0.0f;
-
-			replacementMatrix[3] = 0.0f;
-			replacementMatrix[7] = 0.0f;
-			replacementMatrix[11] = 0.0f;
-			replacementMatrix[15] = 1.0f;
-
-			glLoadMatrixf(replacementMatrix);
-			return;
+		GLfloat replacementMatrix[16];
+		GLfloat* replacementPtr = replacementMatrix;
+		for (int i = 0; i < 16; i++) {
+			*replacementPtr = *(matrix++);
 		}
 
-		if ((gdTexMatFlags & 1) == 0 || (unknown0 > 3 && (unknown1 > 3 || (gdTexMatFlags & 2) == 0))) {
-			glLoadMatrixf(matrix);
+		if (unknown0 == 3 && (gdTexMatFlags & 1) != 0) {
+
+		}
+		else if (unknown0 != 4 || (gdTexMatFlags & 1) == 0) {
+
+		}
+		else {
+			replacementMatrix[8] = -replacementMatrix[8];
+			replacementMatrix[9] = -replacementMatrix[9];
+			replacementMatrix[10] = -replacementMatrix[10];
+			replacementMatrix[11] = -replacementMatrix[11];
 		}
 
-		NOTIMPL();
+		glLoadMatrixf(replacementMatrix);
 	}
 
 	void cGDriver::TexStageCombine(eGDTextureStageCombineParamType gdParamType, eGDTextureStageCombineModeParam gdParam) {

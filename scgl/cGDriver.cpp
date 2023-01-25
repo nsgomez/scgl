@@ -26,7 +26,9 @@ namespace nSCGL
 		GL_SRC_ALPHA_SATURATE
 	};
 
-	static GLenum drawModeMap[8] = { GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_QUADS, GL_QUAD_STRIP };
+	// Shared with VertexBuffers
+	GLenum drawModeMap[8] = { GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_QUADS, GL_QUAD_STRIP };
+
 	static GLenum glFuncMap[8] = { GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS };
 	static GLenum capabilityMap[8] = { GL_ALPHA_TEST, GL_DEPTH_TEST, GL_STENCIL_TEST, GL_CULL_FACE, GL_BLEND, GL_TEXTURE_2D, GL_FOG, 0 };
 	static GLenum fogParamTypeMap[] = { GL_FOG_MODE, GL_FOG_COLOR, GL_FOG_DENSITY, GL_FOG_START, GL_FOG_END, GL_FOG_COORD_SRC };
@@ -71,20 +73,20 @@ namespace nSCGL
 	cGDriver::~cGDriver() {
 	}
 
-	void cGDriver::DrawArrays(GLenum gdMode, GLint first, GLsizei count) {
-		SIZE_CHECK(gdMode, drawModeMap);
+	void cGDriver::DrawArrays(GLenum gdPrimType, GLint first, GLsizei count) {
+		SIZE_CHECK(gdPrimType, drawModeMap);
 
-		GLenum mode = drawModeMap[gdMode];
+		GLenum mode = drawModeMap[gdPrimType];
 
 		ApplyTextureStages();
 		glDrawArrays(mode, first, count);
 	}
 
-	void cGDriver::DrawElements(GLenum gdMode, GLsizei count, GLenum gdType, void const* indices) {
-		SIZE_CHECK(gdMode, drawModeMap);
+	void cGDriver::DrawElements(GLenum gdPrimType, GLsizei count, GLenum gdType, void const* indices) {
+		SIZE_CHECK(gdPrimType, drawModeMap);
 		SIZE_CHECK(gdType, typeMap);
 
-		GLenum mode = drawModeMap[gdMode];
+		GLenum mode = drawModeMap[gdPrimType];
 		GLenum type = typeMap[gdType];
 
 		ApplyTextureStages();
@@ -255,6 +257,7 @@ namespace nSCGL
 		glMask  = (mask & 0x1000) >> 4; // GL_DEPTH_BUFFER_BIT   (0x100)
 		glMask |= (mask & 0x2000) >> 3; // GL_STENCIL_BUFFER_BIT (0x400)
 		glMask |= (mask & 0x4000);      // GL_COLOR_BUFFER_BIT   (0x4000)
+
 		glClear(glMask);
 	}
 
