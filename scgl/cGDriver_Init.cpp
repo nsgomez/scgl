@@ -105,18 +105,20 @@ namespace nSCGL
 		}
 
 		sGDMode tempMode{};
+		tempMode.textureStageCount = maxTextureUnits;
 
 		// If not set, SC4 throws the "Could not initialize the hardware driver" error and switches to software mode.
 		tempMode.isInitialized = true;
 
-		// TODO: do we actually need to check all these extensions or are they all part of the OpenGL 3.0 core profile?
+		// These capabilities are always present in OpenGL 3.0
 		tempMode.supportsStencilBuffer = true;
 		tempMode.supportsMultitexture = true;
 		tempMode.supportsTextureEnvCombine = true;
-		tempMode.supportsNvTextureEnvCombine4 = true;
 		tempMode.supportsFogCoord = true;
 		tempMode.supportsDxtTextures = true;
-		tempMode.textureStageCount = maxTextureUnits;
+
+		// TODO: need to check if this extension is present
+		tempMode.supportsNvTextureEnvCombine4 = false;
 
 		// TODO: what are these flags for and why does the game's OpenGL driver set them?
 		tempMode.__unknown2 = true;
