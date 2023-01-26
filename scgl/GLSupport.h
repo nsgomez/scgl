@@ -36,6 +36,9 @@ typedef void (APIENTRYP PFNGLDEBUGMESSAGECALLBACKPROC) (GLDEBUGPROC callback, co
 #define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT  0x83F2
 #define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT  0x83F3
 
+#define GL_TEXTURE_BASE_LEVEL             0x813C
+#define GL_TEXTURE_MAX_LEVEL              0x813D
+
 #define GL_FOG_COORD_SRC                  0x8450
 #define GL_FOG_COORD                      0x8451
 
