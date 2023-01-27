@@ -98,8 +98,6 @@ namespace nSCGL
 
 		int normalLength = VertexFormatNumElements(format, 3);
 		int colorLength = VertexFormatNumElements(format, 5);
-
-		float const* fPointer = reinterpret_cast<float const*>(pointer);
 		glVertexPointer(3, GL_FLOAT, stride, pointer);
 
 		if (normalLength == 0) {
@@ -164,10 +162,7 @@ namespace nSCGL
 			0x80008041, 0x80004141, 0x80008141,
 		};
 
-		static constexpr size_t formatMapLength = sizeof(formatToPackedFormatMap) / sizeof(uint32_t);
-		if (gdVertexFormat >= formatMapLength) {
-			return gdVertexFormat;
-		}
+		SIZE_CHECK_RETVAL(gdVertexFormat, formatToPackedFormatMap, 0);
 
 		return formatToPackedFormatMap[gdVertexFormat];
 	}
@@ -207,7 +202,7 @@ namespace nSCGL
 			+ ((gdVertexFormat >> 8) & 0x3)
 			+ ((gdVertexFormat & 3) * 3);
 
-		stride *= sizeof(GLfloat);
+		stride *= 4;
 		if ((gdVertexFormat & 0xf) != 0) {
 			uint32_t addlStride = ((gdVertexFormat >> 18) & 0xf)
 				+ (((gdVertexFormat >> 6) & 1) * 3)
@@ -225,7 +220,10 @@ namespace nSCGL
 
 	uint32_t cGDriver::VertexFormatElementOffset(uint32_t gdVertexFormat, uint32_t gdElementType, uint32_t count) {
 		static uint32_t elementTypeOffsetMap[] = { 12, 4, 4, 12, 4, 4, 4, 8, 12, 16 };
-		static uint32_t elementTypeVertexFormatMap[] = { 0xf, 0x0, 0x3, 0x1f, 0x3f, 0x7f, 0xff, 0x3ff, 0x3fff, 0x3ffff, 0x3fffff };
+		static uint32_t elementTypeVertexFormatMap[] = { 0xf, 0x0, 0x3, 0x1f, 0x3f, 0x7f, 0xff, 0x3ff, 0x3fff, 0x3ffff };
+
+		SIZE_CHECK_RETVAL(gdElementType, elementTypeOffsetMap, 0);
+		SIZE_CHECK_RETVAL(gdElementType, elementTypeVertexFormatMap, 0);
 
 		uint32_t offset = elementTypeOffsetMap[gdElementType] * count;
 		if (gdVertexFormat < 0x80000000) {
@@ -241,7 +239,10 @@ namespace nSCGL
 
 	uint32_t cGDriver::VertexFormatNumElements(uint32_t gdVertexFormat, uint32_t gdElementType) {
 		static uint32_t elementTypeShiftFactor[] = { 0, 2, 5, 6, 7, 8, 10, 14, 18, 22 };
-		static uint32_t elementTypeMask[] = { 0x3, 0x7, 0x1, 0x1, 0x1, 0x3, 0xf, 0xf, 0xf };
+		static uint32_t elementTypeMask[] = { 0x3, 0x7, 0x1, 0x1, 0x1, 0x3, 0xf, 0xf, 0xf, 0xf };
+
+		SIZE_CHECK_RETVAL(gdElementType, elementTypeShiftFactor, 0);
+		SIZE_CHECK_RETVAL(gdElementType, elementTypeMask, 0);
 
 		if (gdVertexFormat < 0x80000000) {
 			gdVertexFormat = MakeVertexFormat(gdVertexFormat);
