@@ -53,7 +53,9 @@ namespace nSCGL
 					texStage.currentlyEnabled = true;
 				}
 
-				void const* textureHandle = reinterpret_cast<uint8_t const*>(interleavedPointer) + VertexFormatElementOffset(interleavedFormat, 7, texStage.coordSrc);
+				int texCoordOffset = VertexFormatElementOffset(interleavedFormat, kGDElementType_TexCoord, texStage.coordSrc);
+				void const* textureHandle = reinterpret_cast<uint8_t const*>(interleavedPointer) + texCoordOffset;
+
 				if (texStage.textureHandle != textureHandle) {
 					glTexCoordPointer(2, GL_FLOAT, interleavedStride, textureHandle);
 					texStage.textureHandle = textureHandle;

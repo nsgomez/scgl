@@ -96,8 +96,8 @@ namespace nSCGL
 			stride = VertexFormatStride(format);
 		}
 
-		int normalLength = VertexFormatNumElements(format, 3);
-		int colorLength = VertexFormatNumElements(format, 5);
+		int normalLength = VertexFormatNumElements(format, kGDElementType_Normal);
+		int colorLength = VertexFormatNumElements(format, kGDElementType_Color);
 		glVertexPointer(3, GL_FLOAT, stride, pointer);
 
 		if (normalLength == 0) {
@@ -112,7 +112,7 @@ namespace nSCGL
 				normalArrayEnabled = true;
 			}
 
-			int normalOffset = VertexFormatElementOffset(format, 3, 0);
+			int normalOffset = VertexFormatElementOffset(format, kGDElementType_Normal, 0);
 			glNormalPointer(GL_FLOAT, stride, reinterpret_cast<uint8_t const*>(pointer) + normalOffset);
 		}
 
@@ -129,7 +129,7 @@ namespace nSCGL
 				colorArrayEnabled = true;
 			}
 
-			int colorOffset = VertexFormatElementOffset(format, 5, 0);
+			int colorOffset = VertexFormatElementOffset(format, kGDElementType_Color, 0);
 
 			// GPU must implement GL_ARB_vertex_array_bgra or GL_EXT_vertex_array_bgra for this to work.
 			// These extensions did not exist when SimCity 4 was released, so their workaround was to
@@ -169,27 +169,27 @@ namespace nSCGL
 
 	uint32_t cGDriver::VertexFormatStride(uint32_t gdVertexFormat) {
 		switch (gdVertexFormat) {
-		case 0x01:
-			return 0x10;
-		case 0x02:
-			return 0x14;
-		case 0x03:
-		case 0x22:
-			return 0x1c;
-		case 0x0a:
-		case 0x21:
-			return 0x18;
-		case 0x0b:
-		case 0x23:
-			return 0x20;
-		case 0x20:
-			return 0xc;
-		case 0x24:
-			return 0x28;
-		case 0x25:
-			return 0x24;
-		case 0x26:
-			return 0x2c;
+		case kGDVertexFormat_V3F_C4UB:
+			return 16;
+		case kGDVertexFormat_V3F_T2F:
+			return 20;
+		case kGDVertexFormat_V3F_2T2F:
+		case kGDVertexFormat_V3F_N3F_C4UB:
+			return 28;
+		case kGDVertexFormat_V3F_C4UB_T2F:
+		case kGDVertexFormat_V3F_N3F:
+			return 24;
+		case kGDVertexFormat_V3F_C4UB_2T2F:
+		case kGDVertexFormat_V3F_N3F_T2F:
+			return 32;
+		case kGDVertexFormat_V3F:
+			return 12;
+		case kGDVertexFormat_V3F_N3F_2T2F:
+			return 40;
+		case kGDVertexFormat_V3F_N3F_C4UB_T2F:
+			return 36;
+		case kGDVertexFormat_V3F_N3F_C4UB_2T2F:
+			return 44;
 		}
 
 		if (gdVertexFormat < 0x80000000) {
