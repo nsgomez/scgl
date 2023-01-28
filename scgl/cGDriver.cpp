@@ -287,16 +287,11 @@ namespace nSCGL
 
 	void cGDriver::StencilFunc(GLenum gdFunc, GLint ref, GLuint mask) {
 		SIZE_CHECK(gdFunc, glFuncMap);
-
-		if (videoModes[currentVideoMode].supportsStencilBuffer) {
-			glStencilFunc(glFuncMap[gdFunc], ref, mask);
-		}
+		glStencilFunc(glFuncMap[gdFunc], ref, mask);
 	}
 
 	void cGDriver::StencilMask(GLuint mask) {
-		if (videoModes[currentVideoMode].supportsStencilBuffer) {
-			glStencilMask(mask);
-		}
+		glStencilMask(mask);
 	}
 
 	void cGDriver::StencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
@@ -305,9 +300,7 @@ namespace nSCGL
 		SIZE_CHECK(zfail, glStencilMap);
 		SIZE_CHECK(zpass, glStencilMap);
 
-		if (videoModes[currentVideoMode].supportsStencilBuffer) {
-			glStencilOp(glStencilMap[fail], glStencilMap[zfail], glStencilMap[zpass]);
-		}
+		glStencilOp(glStencilMap[fail], glStencilMap[zfail], glStencilMap[zpass]);
 	}
 
 	void cGDriver::BlendFunc(GLenum sfactor, GLenum dfactor) {
