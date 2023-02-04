@@ -190,7 +190,7 @@ namespace nSCGL
 			GLfloat replacementMatrix[16];
 			GLfloat* replacementPtr = replacementMatrix;
 			for (int i = 0; i < 16; i++) {
-				*replacementPtr = *(matrix++);
+				replacementPtr[i] = matrix[i];
 			}
 
 			replacementMatrix[2] = 0.0f;
