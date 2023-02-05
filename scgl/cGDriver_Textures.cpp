@@ -161,21 +161,35 @@ namespace nSCGL
 	void cGDriver::TexStageCoord(uint32_t gdTexCoordSource) {
 		static float sCoord[] = { 1.0f, 0.0f, 0.0f, 0.0f };
 		static float tCoord[] = { 0.0f, 1.0f, 0.0f, 0.0f };
+		static float rCoord[] = { 0.0f, 0.0f, 1.0f, 0.0f };
 
 		textureStageData[activeTextureStage].coordSrc = gdTexCoordSource;
 
-		//NOTIMPL();
-		if ((gdTexCoordSource & 0xfffffff8) == 0x10) {
-			glEnable(GL_TEXTURE_GEN_S);
-			glEnable(GL_TEXTURE_GEN_T);
-			glTexGenfv(GL_S, GL_EYE_PLANE, sCoord);
-			glTexGenfv(GL_T, GL_EYE_PLANE, tCoord);
+		if ((gdTexCoordSource & 0xfffffff8) == 0x10) { // mimics D3DTSS_TCI_CAMERASPACEPOSITION
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
+			glLoadIdentity();
+
 			glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
 			glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+			glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+
+			glTexGenfv(GL_S, GL_EYE_PLANE, sCoord);
+			glTexGenfv(GL_T, GL_EYE_PLANE, tCoord);
+			glTexGenfv(GL_R, GL_EYE_PLANE, rCoord);
+
+			glPopMatrix();
+			glEnable(GL_TEXTURE_GEN_S);
+			glEnable(GL_TEXTURE_GEN_T);
+			glEnable(GL_TEXTURE_GEN_R);
 		}
+		// There are technically TexGen modes for 0x20 (D3DTSS_TCI_CAMERASPACENORMAL) and
+		// 0x30 (D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR), but SimCity 4 doesn't seem to
+		// use them, so they're left unimplemented.
 		else {
 			glDisable(GL_TEXTURE_GEN_S);
 			glDisable(GL_TEXTURE_GEN_T);
+			glDisable(GL_TEXTURE_GEN_R);
 		}
 	}
 
