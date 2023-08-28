@@ -24,6 +24,16 @@ typedef void (APIENTRYP PFNGLCLIENTACTIVETEXTUREPROC) (GLenum texture);
 typedef void (APIENTRY* GLDEBUGPROC)(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 typedef void (APIENTRYP PFNGLDEBUGMESSAGECALLBACKPROC) (GLDEBUGPROC callback, const void* userParam);
 
+typedef HANDLE (WINAPI* PFNWGLCREATEBUFFERREGIONARBPROC) (HDC hDC, int iLayerPlane, UINT uType);
+typedef VOID (WINAPI* PFNWGLDELETEBUFFERREGIONARBPROC) (HANDLE hRegion);
+typedef BOOL (WINAPI* PFNWGLSAVEBUFFERREGIONARBPROC) (HANDLE hRegion, int x, int y, int width, int height);
+typedef BOOL (WINAPI* PFNWGLRESTOREBUFFERREGIONARBPROC) (HANDLE hRegion, int x, int y, int width, int height, int xSrc, int ySrc);
+
+#define WGL_FRONT_COLOR_BUFFER_BIT_ARB    0x00000001
+#define WGL_BACK_COLOR_BUFFER_BIT_ARB     0x00000002
+#define WGL_DEPTH_BUFFER_BIT_ARB          0x00000004
+#define WGL_STENCIL_BUFFER_BIT_ARB        0x00000008
+
 #define GL_UNSIGNED_SHORT_4_4_4_4         0x8033
 #define GL_UNSIGNED_SHORT_5_5_5_1         0x8034
 #define GL_UNSIGNED_INT_8_8_8_8           0x8035
@@ -108,18 +118,7 @@ typedef void (APIENTRYP PFNGLDEBUGMESSAGECALLBACKPROC) (GLDEBUGPROC callback, co
 #define GL_MAX_DEBUG_GROUP_STACK_DEPTH    0x826C
 #define GL_DEBUG_GROUP_STACK_DEPTH        0x826D
 #define GL_DEBUG_OUTPUT                   0x92E0
-// ---------------------- End subset ----------------------
-
-#define GL_KTX_FRONT_REGION 0x0
-#define GL_KTX_BACK_REGION 0x1
-#define GL_KTX_Z_REGION 0x2
-#define GL_KTX_STENCIL_REGION 0x3
-
-typedef GLuint (APIENTRYP PFNGLBUFFERREGIONENABLEDPROC) (void);
-typedef void (APIENTRYP PFNGLDELETEBUFFERREGIONPROC) (GLenum region);
-typedef void (APIENTRYP PFNGLDRAWBUFFERREGIONPROC) (GLuint region, GLint x, GLint y, GLsizei width, GLsizei height, GLint xDest, GLint yDest);
-typedef GLuint (APIENTRYP PFNGLNEWBUFFERREGIONPROC) (GLenum region);
-typedef void (APIENTRYP PFNGLREADBUFFERREGIONPROC) (GLuint region, GLint x, GLint y, GLsizei width, GLsizei height);
+// ---------------------- End GLext subset ----------------------
 
 extern PFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D;
 extern PFNGLCOMPRESSEDTEXSUBIMAGE2DPROC glCompressedTexSubImage2D;
@@ -127,10 +126,9 @@ extern PFNGLACTIVETEXTUREPROC glActiveTexture;
 extern PFNGLCLIENTACTIVETEXTUREPROC glClientActiveTexture;
 extern PFNGLDEBUGMESSAGECALLBACKPROC glDebugMessageCallback;
 
-extern PFNGLBUFFERREGIONENABLEDPROC glBufferRegionEnabled;
-extern PFNGLDELETEBUFFERREGIONPROC glDeleteBufferRegion;
-extern PFNGLDRAWBUFFERREGIONPROC glDrawBufferRegion;
-extern PFNGLNEWBUFFERREGIONPROC glNewBufferRegion;
-extern PFNGLREADBUFFERREGIONPROC glReadBufferRegion;
+extern PFNWGLCREATEBUFFERREGIONARBPROC wglCreateBufferRegionARB;
+extern PFNWGLDELETEBUFFERREGIONARBPROC wglDeleteBufferRegionARB;
+extern PFNWGLSAVEBUFFERREGIONARBPROC wglSaveBufferRegionARB;
+extern PFNWGLRESTOREBUFFERREGIONARBPROC wglRestoreBufferRegionARB;
 
 void InitGLSupport(void);

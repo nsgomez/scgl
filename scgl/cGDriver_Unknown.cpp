@@ -15,10 +15,7 @@ namespace nSCGL
 			break;
 
 		case GZIID_cIGZGBufferRegionExtension:
-			if (glNewBufferRegion == nullptr || !glBufferRegionEnabled()) {
-				// Intel does not support GL_KTX_buffer_regions, so let's not even expose the interface.
-				// FUTURE: there's a better supported extension, WGL_ARB_buffer_region, that does the
-				// same thing. It would be nice to use that instead.
+			if (wglCreateBufferRegionARB == nullptr) {
 				return false;
 			}
 
