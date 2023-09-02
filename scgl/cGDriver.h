@@ -90,6 +90,7 @@ namespace nSCGL
 		int windowWidth, windowHeight;
 		int viewportX, viewportY, viewportWidth, viewportHeight;
 
+		uint32_t activeMatrixMode;
 		uint32_t activeTextureStage; // 0x18
 		uint32_t maxTextureUnits; // 0x28
 		// We're still using the GL fixed function pipeline,

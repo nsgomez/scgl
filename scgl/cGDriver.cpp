@@ -393,7 +393,8 @@ namespace nSCGL
 		const GLenum modeMap[] = { GL_MODELVIEW, GL_PROJECTION };
 		SIZE_CHECK(mode, modeMap);
 
-		glMatrixMode(modeMap[mode]);
+		activeMatrixMode = modeMap[mode];
+		glMatrixMode(activeMatrixMode);
 	}
 
 	void cGDriver::LoadMatrix(GLfloat const* m) {

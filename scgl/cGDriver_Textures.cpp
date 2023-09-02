@@ -182,6 +182,7 @@ namespace nSCGL
 			glEnable(GL_TEXTURE_GEN_S);
 			glEnable(GL_TEXTURE_GEN_T);
 			glEnable(GL_TEXTURE_GEN_R);
+			glMatrixMode(activeMatrixMode);
 		}
 		// There are technically TexGen modes for 0x20 (D3DTSS_TCI_CAMERASPACENORMAL) and
 		// 0x30 (D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR), but SimCity 4 doesn't seem to
@@ -197,6 +198,7 @@ namespace nSCGL
 		glMatrixMode(GL_TEXTURE);
 		if (matrix == nullptr) {
 			glLoadIdentity();
+			glMatrixMode(activeMatrixMode);
 			return;
 		}
 
@@ -218,11 +220,13 @@ namespace nSCGL
 			replacementMatrix[15] = 1.0f;
 
 			glLoadMatrixf(replacementMatrix);
+			glMatrixMode(activeMatrixMode);
 			return;
 		}
 
 		if ((gdTexMatFlags & 1) == 0 || (unknown0 > 3 && (unknown1 > 3 || (gdTexMatFlags & 2) == 0))) {
 			glLoadMatrixf(matrix);
+			glMatrixMode(activeMatrixMode);
 		}
 
 		NOTIMPL();
