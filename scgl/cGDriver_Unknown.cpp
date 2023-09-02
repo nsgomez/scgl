@@ -15,10 +15,6 @@ namespace nSCGL
 			break;
 
 		case GZIID_cIGZGBufferRegionExtension:
-			if (wglCreateBufferRegionARB == nullptr) {
-				return false;
-			}
-
 			*ppvObj = static_cast<cIGZGBufferRegionExtension*>(this);
 			break;
 

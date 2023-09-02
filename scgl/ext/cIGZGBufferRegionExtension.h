@@ -11,8 +11,7 @@ static const uint32_t GZIID_cIGZGBufferRegionExtension = 0x669565fe;
  * back, stencil, and z-buffers), copy them to an offscreen area, and redraw them at a
  * later time.
  * 
- * SimCity 4 uses this to move the camera without redrawing everything on the screen
- * on every frame.
+ * SimCity 4 uses this to avoid redrawing the entire scene on every frame.
  */
 class cIGZGBufferRegionExtension : public cIGZUnknown
 {

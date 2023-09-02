@@ -22,14 +22,16 @@ namespace nSCGL
 	}
 
 	bool cGDriver::BufferRegionEnabled(void) {
-		// TODO: the correct thing would be to check if the WGL context has this extension, but every modern GPU
-		// (anything made in the last 15 years) should support this, so it's more nitpicking than anything else.
-		return true;
+		return wglCreateBufferRegionARB != nullptr;
 	}
 
 	uint32_t cGDriver::NewBufferRegion(int32_t gdBufferRegionType) {
 		static GLenum regionTypeMap[] = { WGL_BACK_COLOR_BUFFER_BIT_ARB, WGL_DEPTH_BUFFER_BIT_ARB, WGL_STENCIL_BUFFER_BIT_ARB };
 		SIZE_CHECK_RETVAL(gdBufferRegionType, regionTypeMap, 0);
+
+		if (wglCreateBufferRegionARB == nullptr) {
+			return 0;
+		}
 
 		uint32_t bufferRegionIndex = FindFreeBufferRegionIndex();
 		if (bufferRegionIndex == -1) {
