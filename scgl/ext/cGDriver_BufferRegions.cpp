@@ -72,7 +72,9 @@ namespace nSCGL
 	}
 
 	bool cGDriver::CanDoPartialRegionWrites(void) {
-		return true;
+		// TODO: we might be able to implement partial writes if we use OpenGL 3.0 and glBlitFramebuffer
+		// instead of the older WGL_ARB_buffer_region extension.
+		return false;
 	}
 
 	bool cGDriver::CanDoOffsetReads(void) {
