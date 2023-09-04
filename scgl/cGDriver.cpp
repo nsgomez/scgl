@@ -354,6 +354,9 @@ namespace nSCGL
 		glEnable(GL_LIGHT0);
 		EnableVertexColors(ambientMaterialEnabled, diffuseMaterialEnabled);
 
+		GLfloat lightPos[] = { 1.0, 1.0, 0.0, 0.0 };
+		glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+
 		GLfloat params[4] = { colorMultiplierR, colorMultiplierG, colorMultiplierB, colorMultiplierA };
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, params);
 
