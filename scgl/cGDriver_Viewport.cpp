@@ -203,7 +203,7 @@ namespace nSCGL
 			wglMakeCurrent(hdc, static_cast<HGLRC>(glContext));
 
 			if (supportedExtensions.swapControl) {
-				wglSwapIntervalEXT(1);
+				wglSwapIntervalEXT(-1);
 			}
 
 			// Window should now be ready to go, show it and wrap up initialization
