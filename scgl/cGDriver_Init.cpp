@@ -61,6 +61,8 @@ namespace nSCGL
 		for (int i = 0; i < glExtensionCount; i++) {
 			const char* extensionName = reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i));
 
+			if (strcmp(extensionName, "GL_ARB_vertex_array_bgra") == 0) supportedExtensions.bgraColor = true;
+			if (strcmp(extensionName, "GL_EXT_vertex_array_bgra") == 0) supportedExtensions.bgraColor = true;
 			if (strcmp(extensionName, "GL_ARB_multitexture") == 0) supportedExtensions.multitexture = true;
 			if (strcmp(extensionName, "GL_ARB_texture_env_combine") == 0) supportedExtensions.textureEnvCombine = true;
 			if (strcmp(extensionName, "GL_EXT_fog_coord") == 0) supportedExtensions.fogCoord = true;
@@ -85,6 +87,10 @@ namespace nSCGL
 
 				token = strtok(nullptr, " ");
 			}
+		}
+
+		if (!supportedExtensions.bgraColor) {
+			MessageBoxA(NULL, "Your graphics card does not support BGRA color order. SimCity 4 will fall back to software rendering.", "SCGL failed to start", MB_ICONERROR);
 		}
 
 		// Get device info while the false context is still up
@@ -168,7 +174,7 @@ namespace nSCGL
 			tempMode.textureStageCount = maxTextureUnits;
 
 			// If not set, SC4 throws the "Could not initialize the hardware driver" error and switches to software mode.
-			tempMode.isInitialized = true;
+			tempMode.isInitialized = supportedExtensions.bgraColor;
 
 			// Set our graphics capabilities as determined by extensions.
 			// Stencil buffer is always present since we require it for the pixel format.

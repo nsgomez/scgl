@@ -234,7 +234,7 @@ namespace nSCGL
 	}
 
 	bool cGDriver::IsDeviceReady(void) {
-		return glContext != nullptr;
+		return glContext != nullptr && supportedExtensions.bgraColor;
 	}
 
 	void cGDriver::Flush(void) {

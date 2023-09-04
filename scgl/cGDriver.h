@@ -106,6 +106,7 @@ namespace nSCGL
 	private:
 		struct {
 			// OpenGL
+			bool bgraColor;
 			bool stencilBuffer;
 			bool multitexture;
 			bool textureEnvCombine;
