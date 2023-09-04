@@ -82,13 +82,18 @@ namespace nSCGL
 
 			// Create the new window with desired width and height
 			DWORD dwStyle, dwExtStyle;
+			RECT wndRect{ 0, 0, windowWidth, windowHeight };
+
 			if (fullscreen) {
-				dwStyle = WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+				dwStyle = WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_MAXIMIZE;
 				dwExtStyle = WS_EX_APPWINDOW | WS_EX_TOPMOST;
 			}
 			else {
 				dwStyle = WS_SYSMENU | WS_MINIMIZEBOX | WS_CAPTION | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 				dwExtStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+
+				AdjustWindowRectEx(&wndRect, dwStyle, FALSE, dwExtStyle);
+				OffsetRect(&wndRect, 0, GetSystemMetrics(SM_CYCAPTION));
 			}
 
 			HWND hwnd = CreateWindowExA(
@@ -96,8 +101,10 @@ namespace nSCGL
 				"GDriverClass--OpenGL",
 				"GDriverWindow--OpenGL",
 				dwStyle,
-				0, 0,
-				windowWidth, windowHeight,
+				wndRect.left,
+				wndRect.top,
+				wndRect.right - wndRect.left,
+				wndRect.bottom - wndRect.top,
 				nullptr,
 				nullptr,
 				GetModuleHandle(nullptr),
