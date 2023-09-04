@@ -1,7 +1,6 @@
 #include "cGDriver.h"
 #include "cGDCombiner.h"
 #include "GLSupport.h"
-#include <GLFW/glfw3.h>
 
 #ifdef NDEBUG
 #define DBGLOGERR()

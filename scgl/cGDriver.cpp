@@ -32,9 +32,6 @@ namespace nSCGL
 	static GLenum fogParamTypeMap[] = { GL_FOG_MODE, GL_FOG_COLOR, GL_FOG_DENSITY, GL_FOG_START, GL_FOG_END, GL_FOG_COORD_SRC };
 
 	cGDriver::cGDriver() :
-		window(nullptr),
-		glfwExtensionCount(),
-		glfwExtensions(),
 		lastError(DriverError::OK),
 #ifndef NDEBUG
 		dbgLastError(GL_NO_ERROR),
@@ -60,11 +57,16 @@ namespace nSCGL
 		colorArrayEnabled(false),
 		ambientMaterialEnabled(false),
 		diffuseMaterialEnabled(false),
+		activeMatrixMode(GL_MODELVIEW),
 		activeTextureStage(0),
 		maxTextureUnits(0),
 		textureStageData(),
+		bufferRegionFlags(0),
+		bufferRegionHandles(),
+		supportedExtensions(),
+		windowHandle(nullptr),
 		deviceContext(nullptr),
-		bufferRegionFlags(0)
+		glContext(nullptr)
 	{
 	}
 

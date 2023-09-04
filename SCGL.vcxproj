@@ -25,21 +25,6 @@
     <ClCompile Include="scgl\GLSupport.cpp" />
     <ClCompile Include="vendor\framework\src\cRZCOMDllDirector.cpp" />
     <ClCompile Include="vendor\framework\src\cRZRefCount.cpp" />
-    <ClCompile Include="vendor\glfw\src\context.c" />
-    <ClCompile Include="vendor\glfw\src\egl_context.c" />
-    <ClCompile Include="vendor\glfw\src\init.c" />
-    <ClCompile Include="vendor\glfw\src\input.c" />
-    <ClCompile Include="vendor\glfw\src\monitor.c" />
-    <ClCompile Include="vendor\glfw\src\osmesa_context.c" />
-    <ClCompile Include="vendor\glfw\src\vulkan.c" />
-    <ClCompile Include="vendor\glfw\src\wgl_context.c" />
-    <ClCompile Include="vendor\glfw\src\win32_init.c" />
-    <ClCompile Include="vendor\glfw\src\win32_joystick.c" />
-    <ClCompile Include="vendor\glfw\src\win32_monitor.c" />
-    <ClCompile Include="vendor\glfw\src\win32_thread.c" />
-    <ClCompile Include="vendor\glfw\src\win32_time.c" />
-    <ClCompile Include="vendor\glfw\src\win32_window.c" />
-    <ClCompile Include="vendor\glfw\src\window.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scgl\cGDCombiner.h" />
@@ -87,16 +72,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);.\vendor\framework\include;.\vendor\glew\include;.\vendor\glfw\include</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);.\vendor\framework\include</IncludePath>
+    <EmbedManifest>false</EmbedManifest>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);.\vendor\framework\include;.\vendor\glew\include;.\vendor\glfw\include</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);.\vendor\framework\include</IncludePath>
+    <EmbedManifest>false</EmbedManifest>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;GLEW_STATIC;_GLFW_WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;scgl_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;scgl_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
@@ -118,7 +107,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;GLEW_STATIC;_GLFW_WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;scgl_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;scgl_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>

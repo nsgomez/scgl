@@ -20,7 +20,6 @@ Note: Debug builds will run slower due to additional logging and error checking.
 
 SCGL depends on these third-party projects, which are already included in the `vendor` folder:
 
-* [GLFW](https://github.com/glfw/glfw) (zlib License) for setting up OpenGL contexts.
 * [gzcom-dll](https://github.com/nsgomez/gzcom-dll) (Expat License) to register the graphics implementation with the game.
 * [Scion](https://github.com/nsgomez/scion) (LGPLv2.1) for compatibility with game components.
 

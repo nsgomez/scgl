@@ -30,51 +30,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="vendor\glfw\src\win32_time.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\glfw\src\win32_window.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\glfw\src\window.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\glfw\src\init.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\glfw\src\input.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\glfw\src\monitor.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\glfw\src\vulkan.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\glfw\src\wgl_context.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\glfw\src\win32_init.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\glfw\src\win32_joystick.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\glfw\src\win32_monitor.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\glfw\src\win32_thread.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\glfw\src\osmesa_context.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\glfw\src\egl_context.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\glfw\src\context.c">
-      <Filter>vendor_src\glfw</Filter>
-    </ClCompile>
     <ClCompile Include="vendor\framework\src\cRZCOMDllDirector.cpp">
       <Filter>vendor_src\framework</Filter>
     </ClCompile>

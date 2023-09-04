@@ -10,8 +10,6 @@
 #include "ext/cIGZGDriverVertexBufferExtension.h"
 #include "ext/cIGZGSnapshotExtension.h"
 
-struct GLFWwindow;
-
 extern FILE* gLogFile;
 
 #ifdef NDEBUG
@@ -70,11 +68,6 @@ namespace nSCGL
 		};
 
 	private:
-		GLFWwindow* window;
-		uint32_t glfwExtensionCount;
-		const char** glfwExtensions;
-
-	private:
 		unsigned int refCount;
 		DriverError lastError;
 
@@ -110,12 +103,38 @@ namespace nSCGL
 		uint8_t bufferRegionFlags;
 		void* bufferRegionHandles[MAX_BUFFER_REGIONS];
 
+	private:
+		struct {
+			// OpenGL
+			bool stencilBuffer;
+			bool multitexture;
+			bool textureEnvCombine;
+			bool fogCoord;
+			bool textureCompression;
+			bool nvTextureEnvCombine4;
+			bool debugOutput;
+			bool noError;
+
+			// WGL
+			bool bufferRegion;
+			bool createContext;
+			bool createContextNoError;
+			bool createContextProfile;
+			bool multisample;
+			bool pixelFormat;
+			bool swapControl;
+		} supportedExtensions;
+
+	private:
+		void* windowHandle;
 		void* deviceContext;
+		void* glContext;
 
 	private:
 		void SetLastError(DriverError err);
 		void SetLightingParameters();
 		void ApplyTextureStages();
+		void DestroyOpenGLContext();
 		int FindFreeBufferRegionIndex(void);
 		int InitializeVideoModeVector(void);
 

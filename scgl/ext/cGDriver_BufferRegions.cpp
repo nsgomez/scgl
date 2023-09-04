@@ -22,14 +22,14 @@ namespace nSCGL
 	}
 
 	bool cGDriver::BufferRegionEnabled(void) {
-		return wglCreateBufferRegionARB != nullptr;
+		return supportedExtensions.bufferRegion && wglCreateBufferRegionARB != nullptr;
 	}
 
 	uint32_t cGDriver::NewBufferRegion(int32_t gdBufferRegionType) {
 		static GLenum regionTypeMap[] = { WGL_BACK_COLOR_BUFFER_BIT_ARB, WGL_DEPTH_BUFFER_BIT_ARB, WGL_STENCIL_BUFFER_BIT_ARB };
 		SIZE_CHECK_RETVAL(gdBufferRegionType, regionTypeMap, 0);
 
-		if (wglCreateBufferRegionARB == nullptr) {
+		if (!supportedExtensions.bufferRegion || wglCreateBufferRegionARB == nullptr) {
 			return 0;
 		}
 
