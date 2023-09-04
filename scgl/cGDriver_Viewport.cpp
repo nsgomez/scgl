@@ -84,10 +84,10 @@ namespace nSCGL
 			DWORD dwStyle, dwExtStyle;
 			if (fullscreen) {
 				dwStyle = WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
-				dwExtStyle = WS_EX_APPWINDOW;
+				dwExtStyle = WS_EX_APPWINDOW | WS_EX_TOPMOST;
 			}
 			else {
-				dwStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+				dwStyle = WS_SYSMENU | WS_MINIMIZEBOX | WS_CAPTION | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 				dwExtStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
 			}
 
@@ -111,7 +111,6 @@ namespace nSCGL
 			HDC hdc = GetDC(hwnd);
 			windowHandle = hwnd;
 			deviceContext = hdc;
-			SetWindowLong(hwnd, GWL_WNDPROC, reinterpret_cast<LONG>(hwndProc));
 
 			// Try to set the new pixel format with the OpenGL extension, which lets us guarantee hardware
 			// acceleration. If we don't have it, we're probably on ancient hardware but fall back anyway.
@@ -124,8 +123,9 @@ namespace nSCGL
 					WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
 					WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
 					WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
-					WGL_COLOR_BITS_ARB, newMode.depth == 32 ? 24 : 15,
+					WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB,
 					WGL_ALPHA_BITS_ARB, newMode.depth == 32 ? 8 : 1,
+					WGL_COLOR_BITS_ARB, newMode.depth == 32 ? 24 : 15,
 					WGL_DEPTH_BITS_ARB, newMode.depth == 32 ? 24 : 16,
 					WGL_STENCIL_BITS_ARB, 8,
 					0, 0, // Reserved for WGL_SAMPLE_BUFFERS_ARB
@@ -135,10 +135,10 @@ namespace nSCGL
 
 				// TODO: should have some way of disabling MSAA
 				if (supportedExtensions.multisample) {
-					attribIList[16] = WGL_SAMPLE_BUFFERS_ARB;
-					attribIList[17] = 1;
-					attribIList[18] = WGL_SAMPLES_ARB;
-					attribIList[19] = 4;
+					attribIList[18] = WGL_SAMPLE_BUFFERS_ARB;
+					attribIList[19] = 1;
+					attribIList[20] = WGL_SAMPLES_ARB;
+					attribIList[21] = 4;
 				}
 
 				uint32_t numFormats;
@@ -155,8 +155,9 @@ namespace nSCGL
 				pfd.nVersion = 1;
 				pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
 				pfd.iPixelType = PFD_TYPE_RGBA;
-				pfd.cColorBits = newMode.depth;
-				pfd.cDepthBits = (newMode.depth == 16) ? 16 : 24;
+				pfd.cAlphaBits = (newMode.depth == 32) ? 8 : 1;
+				pfd.cColorBits = (newMode.depth == 32) ? 24 : 16;
+				pfd.cDepthBits = (newMode.depth == 32) ? 24 : 16;
 				pfd.cStencilBits = 8;
 				pfd.iLayerType = PFD_MAIN_PLANE;
 
@@ -206,6 +207,7 @@ namespace nSCGL
 			}
 
 			// Window should now be ready to go, show it and wrap up initialization
+			SetWindowLong(hwnd, GWL_WNDPROC, reinterpret_cast<LONG>(hwndProc));
 			ShowWindow(hwnd, SW_SHOWNORMAL);
 
 #ifndef NDEBUG
@@ -230,7 +232,7 @@ namespace nSCGL
 
 	void cGDriver::Flush(void) {
 		glFlush();
-		wglSwapLayerBuffers(static_cast<HDC>(deviceContext), WGL_SWAP_MAIN_PLANE);
+		SwapBuffers(static_cast<HDC>(deviceContext));
 	}
 
 	void cGDriver::SetViewport(void) {

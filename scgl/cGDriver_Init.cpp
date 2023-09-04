@@ -10,7 +10,6 @@ namespace nSCGL
 		wc.style = CS_OWNDC;
 		wc.lpfnWndProc = DefWindowProcA;
 		wc.hInstance = GetModuleHandle(nullptr);
-		wc.hbrBackground = (HBRUSH)COLOR_BACKGROUND;
 		wc.lpszClassName = "GDriverClass--OpenGL";
 
 		UnregisterClass(wc.lpszClassName, nullptr);
