@@ -15,8 +15,11 @@ namespace nSCGL
 		UnregisterClass(wc.lpszClassName, nullptr);
 
 		if (!RegisterClass(&wc)) {
-			MessageBoxA(NULL, "Failed to set up an OpenGL window class", "SCGL failed to start", MB_ICONERROR);
-			return false;
+			DWORD err = GetLastError();
+			if (err != ERROR_CLASS_ALREADY_EXISTS) {
+				MessageBoxA(NULL, "Failed to set up an OpenGL window class", "SCGL failed to start", MB_ICONERROR);
+				return false;
+			}
 		}
 
 		windowHandle = CreateWindowA(wc.lpszClassName, "GDriverWindow--OpenGL--FalseContext", WS_OVERLAPPEDWINDOW, 0, 0, 640, 480, nullptr, nullptr, wc.hInstance, 0);
