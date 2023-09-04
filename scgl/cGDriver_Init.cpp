@@ -167,7 +167,8 @@ namespace nSCGL
 			// If not set, SC4 throws the "Could not initialize the hardware driver" error and switches to software mode.
 			tempMode.isInitialized = true;
 
-			// These capabilities are always present in OpenGL 3.0
+			// Set our graphics capabilities as determined by extensions.
+			// Stencil buffer is always present since we require it for the pixel format.
 			tempMode.supportsStencilBuffer = true;
 			tempMode.supportsMultitexture = supportedExtensions.multitexture;
 			tempMode.supportsTextureEnvCombine = supportedExtensions.textureEnvCombine;
