@@ -14,7 +14,7 @@ Install [Visual Studio 2022](https://visualstudio.microsoft.com/#vs-section) or 
 Then use the solution and project files in the repository root to build SCGL. The default target is Debug x86, which
 will create a Debug folder in the repository containing a `SCGL.dll` build.
 
-Note: Debug builds will run slower due to additional logging and error checking. 
+Note: Debug builds will run slower due to additional logging and error checking.
 
 ## Third-party components
 
