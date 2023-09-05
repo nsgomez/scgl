@@ -72,12 +72,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);.\vendor\framework\include</IncludePath>
     <EmbedManifest>false</EmbedManifest>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);.\vendor\framework\include</IncludePath>
     <EmbedManifest>false</EmbedManifest>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
@@ -93,6 +91,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>.\vendor\framework\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -113,7 +112,7 @@
       </PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalOptions>/utf-8 /Gw %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /Gw /Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
       <ExceptionHandling>false</ExceptionHandling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FloatingPointModel>Fast</FloatingPointModel>
@@ -122,6 +121,7 @@
       <ControlFlowGuard>false</ControlFlowGuard>
       <StringPooling>true</StringPooling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>.\vendor\framework\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
