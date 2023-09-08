@@ -86,6 +86,7 @@ namespace nSCGL
 		uint32_t activeMatrixMode;
 		uint32_t activeTextureStage; // 0x18
 		uint32_t maxTextureUnits; // 0x28
+		uint32_t textureParameters[4];
 		// We're still using the GL fixed function pipeline,
 		// so we shouldn't have a high number of texture units.
 		TextureStageData textureStageData[MAX_TEXTURE_UNITS]; // 0x2c?

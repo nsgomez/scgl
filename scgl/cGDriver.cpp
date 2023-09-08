@@ -60,6 +60,7 @@ namespace nSCGL
 		activeMatrixMode(GL_MODELVIEW),
 		activeTextureStage(0),
 		maxTextureUnits(0),
+		textureParameters { GL_LINEAR, GL_NEAREST_MIPMAP_LINEAR, GL_REPEAT, GL_REPEAT },
 		textureStageData(),
 		bufferRegionFlags(0),
 		bufferRegionHandles(),

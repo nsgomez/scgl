@@ -59,6 +59,11 @@ namespace nSCGL
 					glTexCoordPointer(2, GL_FLOAT, interleavedStride, textureHandle);
 					texStage.textureHandle = textureHandle;
 				}
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, textureParameters[0]);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, textureParameters[1]);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureParameters[2]);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureParameters[3]);
 			}
 		}
 
@@ -143,7 +148,7 @@ namespace nSCGL
 		SIZE_CHECK(pname, texParamNameMap);
 		SIZE_CHECK(param, texParamMap);
 
-		glTexParameteri(GL_TEXTURE_2D, texParamNameMap[pname], texParamMap[param]);
+		textureParameters[pname] = texParamMap[param];
 	}
 
 	void cGDriver::TexStage(GLenum texUnit) {
