@@ -318,9 +318,7 @@ namespace nSCGL
 		GLenum glFormat = formatMap[gdTexFormat];
 		GLenum glType = typeMap[gdType];
 
-		glGetError();
 		glBindTexture(GL_TEXTURE_2D, texture);
-		glGetError();
 
 		GLint texParamWidth, texParamHeight, internalFormat;
 		glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_WIDTH, &texParamWidth);
