@@ -225,6 +225,14 @@ namespace nSCGL
 #endif
 
 			glEnableClientState(GL_VERTEX_ARRAY);
+
+			// SimCity 4 doesn't use the GZDriverLightingExtension, but it does expect
+			// there to be a light enabled and to 45deg above x/y.
+			GLfloat lightPos[] = { 1.0, 1.0, 0.0, 0.0 };
+			glEnable(GL_LIGHTING);
+			glEnable(GL_LIGHT0);
+			glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+
 			SetViewport();
 			SetLastError(DriverError::OK);
 		}

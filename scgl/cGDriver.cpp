@@ -351,14 +351,9 @@ namespace nSCGL
 	}
 
 	void cGDriver::SetLightingParameters() {
-		glEnable(GL_LIGHTING);
-		glEnable(GL_LIGHT0);
 		EnableVertexColors(ambientMaterialEnabled, diffuseMaterialEnabled);
 
-		GLfloat lightPos[] = { 1.0, 1.0, 0.0, 0.0 };
-		glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
-
-		GLfloat params[4] = { colorMultiplierR, colorMultiplierG, colorMultiplierB, colorMultiplierA };
+		GLfloat params[4] = { colorMultiplierR, colorMultiplierG, colorMultiplierB, 1.0f };
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, params);
 
 		params[0] = 1.0f;
@@ -383,7 +378,6 @@ namespace nSCGL
 			return;
 		}
 
-		glEnable(GL_COLOR_MATERIAL);
 		if (ambient && diffuse) {
 			glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 		}
@@ -393,6 +387,8 @@ namespace nSCGL
 		else {
 			glColorMaterial(GL_FRONT, GL_AMBIENT);
 		}
+
+		glEnable(GL_COLOR_MATERIAL);
 	}
 
 	void cGDriver::MatrixMode(GLenum mode) {
