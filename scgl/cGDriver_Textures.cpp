@@ -8,6 +8,9 @@
 #define DBGLOGERR() dbgLastError = glGetError();
 #endif
 
+extern GLenum typeMap[16];
+extern GLenum glBlendMap[11];
+
 namespace nSCGL
 {
 	static GLenum texEnvParamMap[2] = { GL_TEXTURE_ENV_MODE, GL_TEXTURE_ENV_COLOR };
@@ -22,54 +25,6 @@ namespace nSCGL
 		GL_COMPRESSED_RGB_S3TC_DXT1_EXT, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,
 		GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
 	};
-
-	extern GLenum typeMap[16];
-	extern GLenum glBlendMap[11];
-
-	void cGDriver::ApplyTextureStages() {
-		for (uint32_t i = 0; i < maxTextureUnits; i++) {
-			TextureStageData& texStage = textureStageData[i];
-			if (!texStage.toBeEnabled) {
-				if (texStage.currentlyEnabled) {
-					glClientActiveTexture(GL_TEXTURE0 + i);
-					glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-					glActiveTexture(GL_TEXTURE0 + i);
-					glDisable(GL_TEXTURE_2D);
-
-					texStage.currentlyEnabled = false;
-					texStage.textureHandle = nullptr;
-				}
-			}
-			else {
-				glClientActiveTexture(GL_TEXTURE0 + i);
-
-				if (!texStage.currentlyEnabled) {
-					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-					glActiveTexture(GL_TEXTURE0 + i);
-					glEnable(GL_TEXTURE_2D);
-
-					texStage.currentlyEnabled = true;
-				}
-
-				int texCoordOffset = VertexFormatElementOffset(interleavedFormat, kGDElementType_TexCoord, texStage.coordSrc);
-				void const* textureHandle = reinterpret_cast<uint8_t const*>(interleavedPointer) + texCoordOffset;
-
-				if (texStage.textureHandle != textureHandle) {
-					glTexCoordPointer(2, GL_FLOAT, interleavedStride, textureHandle);
-					texStage.textureHandle = textureHandle;
-				}
-
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, textureParameters[0]);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, textureParameters[1]);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureParameters[2]);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureParameters[3]);
-			}
-		}
-
-		glActiveTexture(GL_TEXTURE0 + activeTextureStage);
-		glClientActiveTexture(GL_TEXTURE0 + activeTextureStage);
-	}
 
 	void cGDriver::GenTextures(GLsizei n, GLuint* textures) {
 		glGenTextures(n, textures);
@@ -128,34 +83,20 @@ namespace nSCGL
 	}
 
 	void cGDriver::TexEnv(GLenum target, GLenum pname, GLint gdParam) {
-		GLint paramMap[] = { GL_REPLACE, GL_MODULATE, GL_DECAL, GL_BLEND, GL_COMBINE, GL_COMBINE4_NV };
-
-		SIZE_CHECK(pname, texEnvParamMap);
-		SIZE_CHECK(gdParam, paramMap);
-
-		glTexEnvi(GL_TEXTURE_ENV, texEnvParamMap[pname], paramMap[gdParam]);
+		state.TexEnv(target, pname, gdParam);
 	}
 
 	void cGDriver::TexEnv(GLenum target, GLenum pname, GLfloat const* params) {
-		SIZE_CHECK(pname, texEnvParamMap);
-		glTexEnvfv(GL_TEXTURE_ENV, texEnvParamMap[pname], params);
+		state.TexEnv(target, pname, params);
 	}
 
 	void cGDriver::TexParameter(GLenum target, GLenum pname, GLint param) {
-		static GLenum texParamNameMap[] = { GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T };
-		static GLenum texParamMap[] = { GL_NEAREST, GL_LINEAR, GL_CLAMP, GL_REPEAT, GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR };
-
-		SIZE_CHECK(pname, texParamNameMap);
-		SIZE_CHECK(param, texParamMap);
-
-		textureParameters[pname] = texParamMap[param];
+		state.TexParameter(target, pname, param);
 	}
 
 	void cGDriver::TexStage(GLenum texUnit) {
-		if (texUnit < maxTextureUnits) {
-			activeTextureStage = texUnit;
-			glClientActiveTexture(GL_TEXTURE0 + texUnit);
-			glActiveTexture(GL_TEXTURE0 + texUnit);
+		if (texUnit < MAX_TEXTURE_UNITS) {
+			state.TexStage(texUnit);
 			return;
 		}
 
@@ -163,77 +104,11 @@ namespace nSCGL
 	}
 
 	void cGDriver::TexStageCoord(uint32_t gdTexCoordSource) {
-		static float sCoord[] = { 1.0f, 0.0f, 0.0f, 0.0f };
-		static float tCoord[] = { 0.0f, 1.0f, 0.0f, 0.0f };
-		static float rCoord[] = { 0.0f, 0.0f, 1.0f, 0.0f };
-
-		textureStageData[activeTextureStage].coordSrc = gdTexCoordSource;
-
-		if ((gdTexCoordSource & 0xfffffff8) == 0x10) { // mimics D3DTSS_TCI_CAMERASPACEPOSITION
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-			glLoadIdentity();
-
-			glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-			glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-			glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-
-			glTexGenfv(GL_S, GL_EYE_PLANE, sCoord);
-			glTexGenfv(GL_T, GL_EYE_PLANE, tCoord);
-			glTexGenfv(GL_R, GL_EYE_PLANE, rCoord);
-
-			glPopMatrix();
-			glEnable(GL_TEXTURE_GEN_S);
-			glEnable(GL_TEXTURE_GEN_T);
-			glEnable(GL_TEXTURE_GEN_R);
-			glMatrixMode(activeMatrixMode);
-		}
-		// There are technically TexGen modes for 0x20 (D3DTSS_TCI_CAMERASPACENORMAL) and
-		// 0x30 (D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR), but SimCity 4 doesn't seem to
-		// use them, so they're left unimplemented.
-		else {
-			glDisable(GL_TEXTURE_GEN_S);
-			glDisable(GL_TEXTURE_GEN_T);
-			glDisable(GL_TEXTURE_GEN_R);
-		}
+		state.TexStageCoord(gdTexCoordSource);
 	}
 
 	void cGDriver::TexStageMatrix(GLfloat const* matrix, uint32_t unknown0, uint32_t unknown1, uint32_t gdTexMatFlags) {
-		glMatrixMode(GL_TEXTURE);
-		if (matrix == nullptr) {
-			glLoadIdentity();
-			glMatrixMode(activeMatrixMode);
-			return;
-		}
-
-		if ((gdTexMatFlags & 3) == 1 && unknown0 == 4 && unknown1 == 2) {
-			GLfloat replacementMatrix[16];
-			GLfloat* replacementPtr = replacementMatrix;
-			for (int i = 0; i < 16; i++) {
-				replacementPtr[i] = matrix[i];
-			}
-
-			replacementMatrix[2] = 0.0f;
-			replacementMatrix[6] = 0.0f;
-			replacementMatrix[10] = 1.0f;
-			replacementMatrix[14] = 0.0f;
-
-			replacementMatrix[3] = 0.0f;
-			replacementMatrix[7] = 0.0f;
-			replacementMatrix[11] = 0.0f;
-			replacementMatrix[15] = 1.0f;
-
-			glLoadMatrixf(replacementMatrix);
-			glMatrixMode(activeMatrixMode);
-			return;
-		}
-
-		if ((gdTexMatFlags & 1) == 0 || (unknown0 > 3 && (unknown1 > 3 || (gdTexMatFlags & 2) == 0))) {
-			glLoadMatrixf(matrix);
-			glMatrixMode(activeMatrixMode);
-		}
-
-		NOTIMPL();
+		state.TexStageMatrix(matrix, unknown0, unknown1, gdTexMatFlags);
 	}
 
 	void cGDriver::TexStageCombine(eGDTextureStageCombineParamType gdParamType, eGDTextureStageCombineModeParam gdParam) {
@@ -276,19 +151,11 @@ namespace nSCGL
 	}
 
 	void cGDriver::SetTexture(GLuint textureId, GLenum texUnit) {
-		glActiveTexture(GL_TEXTURE0 + texUnit);
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		glActiveTexture(GL_TEXTURE0 + activeTextureStage);
+		state.SetTexture(textureId, texUnit);
 	}
 
 	intptr_t cGDriver::GetTexture(GLenum texUnit) {
-		glActiveTexture(GL_TEXTURE0 + texUnit);
-
-		int activeTexture;
-		glGetIntegerv(GL_TEXTURE_BINDING_2D, &activeTexture);
-
-		glActiveTexture(GL_TEXTURE0 + activeTextureStage);
-		return activeTexture;
+		return state.GetTexture(texUnit);
 	}
 
 	intptr_t cGDriver::CreateTexture(uint32_t texformat, uint32_t width, uint32_t height, uint32_t levels, uint32_t texhints) {

@@ -233,6 +233,12 @@ namespace nSCGL
 			glEnable(GL_LIGHT0);
 			glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 
+			GLfloat ambientLightParams[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+			glMaterialfv(GL_FRONT, GL_AMBIENT, ambientLightParams);
+
+			GLfloat diffuseLightParams[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+			glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseLightParams);
+
 			SetViewport();
 			SetLastError(DriverError::OK);
 		}

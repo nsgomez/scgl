@@ -22,7 +22,10 @@
     <ClCompile Include="scgl\ext\cGDriver_Lighting.cpp" />
     <ClCompile Include="scgl\ext\cGDriver_Snapshot.cpp" />
     <ClCompile Include="scgl\ext\cGDriver_VertexBuffers.cpp" />
+    <ClCompile Include="scgl\GLStateManager.cpp" />
     <ClCompile Include="scgl\GLSupport.cpp" />
+    <ClCompile Include="scgl\GLTextureUnit.cpp" />
+    <ClCompile Include="scgl\VertexFormatUtils.cpp" />
     <ClCompile Include="vendor\framework\src\cRZCOMDllDirector.cpp" />
     <ClCompile Include="vendor\framework\src\cRZRefCount.cpp" />
   </ItemGroup>
@@ -35,8 +38,11 @@
     <ClInclude Include="scgl\ext\cIGZGDriverLightingExtension.h" />
     <ClInclude Include="scgl\ext\cIGZGDriverVertexBufferExtension.h" />
     <ClInclude Include="scgl\ext\cIGZGSnapshotExtension.h" />
+    <ClInclude Include="scgl\GLStateManager.h" />
     <ClInclude Include="scgl\GLSupport.h" />
+    <ClInclude Include="scgl\GLTextureUnit.h" />
     <ClInclude Include="scgl\sGDMode.h" />
+    <ClInclude Include="scgl\VertexFormatUtils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

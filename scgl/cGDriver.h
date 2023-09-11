@@ -9,24 +9,11 @@
 #include "ext/cIGZGDriverLightingExtension.h"
 #include "ext/cIGZGDriverVertexBufferExtension.h"
 #include "ext/cIGZGSnapshotExtension.h"
-
-extern FILE* gLogFile;
-
-#ifdef NDEBUG
-#define NOTIMPL()
-#define SIZE_CHECK(...)
-#define SIZE_CHECK_RETVAL(...)
-#else
-#define NOTIMPL() { if (gLogFile == nullptr) gLogFile = fopen("cGDriver.notimpl.log", "w"); fprintf(gLogFile, "%s\n", __FUNCSIG__); fflush(gLogFile); }
-#define UNEXPECTED NOTIMPL
-#define SIZE_CHECK(param, map) if (param >= sizeof(map) / sizeof(map[0])) { UNEXPECTED(); return; }
-#define SIZE_CHECK_RETVAL(param, map, ret) if (param >= sizeof(map) / sizeof(map[0])) { UNEXPECTED(); return ret; }
-#endif
+#include "GLStateManager.h"
 
 namespace nSCGL
 {
 	constexpr size_t MAX_BUFFER_REGIONS = sizeof(uint8_t) * 8U;
-	constexpr size_t MAX_TEXTURE_UNITS = 8;
 
 	class cGDriver final :
 		public cIGZGDriver,
@@ -59,14 +46,6 @@ namespace nSCGL
 			NUM_MATRIX_MODES = COLOR + 1,
 		};
 
-		struct TextureStageData
-		{
-			uint32_t coordSrc;
-			void const* textureHandle;
-			bool toBeEnabled;
-			bool currentlyEnabled;
-		};
-
 	private:
 		unsigned int refCount;
 		DriverError lastError;
@@ -82,22 +61,6 @@ namespace nSCGL
 
 		int windowWidth, windowHeight;
 		int viewportX, viewportY, viewportWidth, viewportHeight;
-
-		uint32_t activeMatrixMode;
-		uint32_t activeTextureStage; // 0x18
-		uint32_t maxTextureUnits; // 0x28
-		uint32_t textureParameters[4];
-		// We're still using the GL fixed function pipeline,
-		// so we shouldn't have a high number of texture units.
-		TextureStageData textureStageData[MAX_TEXTURE_UNITS]; // 0x2c?
-
-		bool normalArrayEnabled, colorArrayEnabled;          // 0x81, 0x82
-		bool ambientMaterialEnabled, diffuseMaterialEnabled; // 0xa8, 0xa9
-		float colorMultiplierR, colorMultiplierG, colorMultiplierB, colorMultiplierA; // 0x98, 0x9c, 0xa0, 0xa4
-
-		uint32_t interleavedFormat;     // 0x84
-		int32_t interleavedStride;      // 0x88
-		void const* interleavedPointer; // 0x8c
 
 		// We're not expecting to use a lot of buffer regions simultaneously, so we'll use an
 		// 8-bit mask to indicate which regions are allocated and free.
@@ -128,14 +91,13 @@ namespace nSCGL
 		} supportedExtensions;
 
 	private:
+		GLStateManager state;
 		void* windowHandle;
 		void* deviceContext;
 		void* glContext;
 
 	private:
 		void SetLastError(DriverError err);
-		void SetLightingParameters();
-		void ApplyTextureStages();
 		void DestroyOpenGLContext();
 		int FindFreeBufferRegionIndex(void);
 		int InitializeVideoModeVector(void);

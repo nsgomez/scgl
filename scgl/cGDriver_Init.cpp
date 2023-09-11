@@ -94,8 +94,6 @@ namespace nSCGL
 		}
 
 		// Get device info while the false context is still up
-		glGetIntegerv(GL_MAX_TEXTURE_UNITS, reinterpret_cast<GLint*>(&maxTextureUnits));
-
 		char const* vendor = reinterpret_cast<char const*>(glGetString(GL_VENDOR));
 		char const* renderer = reinterpret_cast<char const*>(glGetString(GL_RENDERER));
 		char const* version = reinterpret_cast<char const*>(glGetString(GL_VERSION));
@@ -171,7 +169,7 @@ namespace nSCGL
 			}
 
 			sGDMode tempMode{};
-			tempMode.textureStageCount = maxTextureUnits;
+			tempMode.textureStageCount = MAX_TEXTURE_UNITS;
 
 			// If not set, SC4 throws the "Could not initialize the hardware driver" error and switches to software mode.
 			tempMode.isInitialized = supportedExtensions.bgraColor;
