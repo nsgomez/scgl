@@ -49,7 +49,6 @@ GLStateManager::GLStateManager() :
 	ambientLightParams{ 0.2f, 0.2f, 0.2f, 1.0f },
 	diffuseLightParams{ 0.0f, 0.0f, 0.0f, 1.0f },
 	activeMatrixMode(0),  // GL_MODELVIEW
-	glSavedMatrixMode(0), // GL_MODELVIEW
 	isIdentityMatrix{ true, true, true },
 	enabledCapabilities{ false, false, false, false, false, false, false, false },
 	texEnvMode(1),        // GL_MODULATE
@@ -327,29 +326,24 @@ void GLStateManager::EnableVertexColors(bool ambient, bool diffuse) {
 
 void GLStateManager::MatrixMode(GLenum mode) {
 	SIZE_CHECK(mode, matrixModeMap);
+
+	if (activeMatrixMode != mode) {
+		glMatrixMode(matrixModeMap[mode]);
+	}
+
 	activeMatrixMode = mode;
 }
 
 void GLStateManager::LoadMatrix(GLfloat const* m) {
-	//if (glSavedMatrixMode != activeMatrixMode) {
-		glMatrixMode(matrixModeMap[activeMatrixMode]);
-		glSavedMatrixMode = activeMatrixMode;
-	//}
-
 	glLoadMatrixf(m);
 	isIdentityMatrix[activeMatrixMode] = false;
 }
 
 void GLStateManager::LoadIdentity(void) {
-	//if (!isIdentityMatrix[activeMatrixMode]) {
-		//if (glSavedMatrixMode != activeMatrixMode) {
-			glMatrixMode(matrixModeMap[activeMatrixMode]);
-			glSavedMatrixMode = activeMatrixMode;
-		//}
-
+	if (!isIdentityMatrix[activeMatrixMode]) {
 		glLoadIdentity();
 		isIdentityMatrix[activeMatrixMode] = true;
-	//}
+	}
 }
 
 void GLStateManager::Enable(GLenum gdCap) {

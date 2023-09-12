@@ -134,7 +134,6 @@ private:
 	float diffuseLightParams[4];
 
 	uint8_t activeMatrixMode;
-	uint8_t glSavedMatrixMode;
 	bool isIdentityMatrix[3];
 
 	bool enabledCapabilities[8];
