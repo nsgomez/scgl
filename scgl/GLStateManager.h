@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "cIGZGDriver.h"
+#include "GLShareableState.h"
 #include "GLSupport.h"
 #include "GLTextureUnit.h"
 
@@ -16,19 +17,11 @@ extern FILE* gLogFile;
 #define SIZE_CHECK(...)
 #define SIZE_CHECK_RETVAL(...)
 #else
-#define NOTIMPL() { if (gLogFile == nullptr) gLogFile = fopen("cGDriver.notimpl.log", "w"); fprintf(gLogFile, "%s\n", __FUNCSIG__); fflush(gLogFile); }
+#define NOTIMPL() { if (gLogFile == nullptr) gLogFile = fopen("C:\\temp\\cGDriver.notimpl.log", "w"); fprintf(gLogFile, "%s\n", __FUNCSIG__); fflush(gLogFile); }
 #define UNEXPECTED NOTIMPL
 #define SIZE_CHECK(param, map) if (param >= sizeof(map) / sizeof(map[0])) { UNEXPECTED(); return; }
 #define SIZE_CHECK_RETVAL(param, map, ret) if (param >= sizeof(map) / sizeof(map[0])) { UNEXPECTED(); return ret; }
 #endif
-
-struct TextureStageData // TODO: DEPRECATED
-{
-	uint32_t coordSrc;
-	void const* textureHandle;
-	bool toBeEnabled;
-	bool currentlyEnabled;
-};
 
 enum GLStatefulMatrix
 {
@@ -80,25 +73,18 @@ public:
 	void TexStage(GLenum texUnit);
 	void TexStageCoord(uint32_t gdTexCoordSource);
 	void TexStageMatrix(GLfloat const* matrix, uint32_t unknown0, uint32_t unknown1, uint32_t gdTexMatFlags);
-	void TexStageCombine(eGDTextureStageCombineParamType gdParamType, eGDTextureStageCombineModeParam gdParam);
-	void TexStageCombine(eGDTextureStageCombineSourceParamType gdParamType, eGDTextureStageCombineSourceParam gdParam);
-	void TexStageCombine(eGDTextureStageCombineOperandType gdParamType, eGDBlend gdBlend);
-	void TexStageCombine(eGDTextureStageCombineScaleParamType gdPname, eGDTextureStageCombineScaleParam gdParam);
-	void SetCombiner(cGDCombiner const& combiner, uint32_t texUnit);
 
 public:
+	void BindTexture(GLuint textureId);
 	void SetTexture(GLuint textureId, GLenum texUnit);
+	void SetTextureImmediately(GLuint textureId);
 	intptr_t GetTexture(GLenum texUnit);
-	void CreateTexture(uint32_t texFormat, uint32_t width, uint32_t height, uint32_t levels, uint32_t texhints);
-	void LoadTextureLevel(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, uint32_t gdTexFormat, uint32_t gdType, uint32_t rowLength, void const* pixels);
 
 private:
 	void ApplyTextureStages();
 	
 public:
-	uint32_t interleavedFormat;
-	uint32_t interleavedStride;
-	void const* interleavedPointer;
+	struct GLShareableState shareable;
 
 private:
 	bool normalArrayEnabled;
@@ -133,7 +119,6 @@ private:
 	float ambientLightParams[4];
 	float diffuseLightParams[4];
 
-	uint8_t activeMatrixMode;
 	bool isIdentityMatrix[3];
 
 	bool enabledCapabilities[8];
@@ -148,8 +133,5 @@ private:
 private:
 	GLTextureUnit textureUnits[2];
 	uint8_t activeTextureUnit;
-
-private:
-	// TODO: temporarily reusing what we already have
-	TextureStageData textureStageData[MAX_TEXTURE_UNITS]; // 0x2c?
+	bool areTextureUnitsDirty;
 };

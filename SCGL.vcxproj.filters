@@ -122,5 +122,8 @@
     <ClInclude Include="scgl\VertexFormatUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="scgl\GLShareableState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

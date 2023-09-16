@@ -13,7 +13,7 @@ namespace nSCGL
 
 		static FILE* glMessageLog = nullptr;
 		if (glMessageLog == nullptr) {
-			glMessageLog = fopen("cGDriver.opengl.log", "w");
+			glMessageLog = fopen("C:\\temp\\cGDriver.opengl.log", "w");
 		}
 
 		fprintf(glMessageLog, "[GLerr] [source: %x] [type: %x] [id: %x] [severity: %d] %s\n", source, type, id, severity, message);

@@ -56,7 +56,7 @@ namespace nSCGL
 		}
 #endif
 
-		glBindTexture(GL_TEXTURE_2D, texture);
+		state.BindTexture(texture);
 	}
 
 	void cGDriver::TexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, void const* pixels) {
@@ -161,7 +161,9 @@ namespace nSCGL
 	intptr_t cGDriver::CreateTexture(uint32_t texformat, uint32_t width, uint32_t height, uint32_t levels, uint32_t texhints) {
 		GLuint textureId;
 		glGenTextures(1, &textureId);
+
 		glBindTexture(GL_TEXTURE_2D, textureId);
+		state.SetTextureImmediately(textureId);
 
 		int numLevels = 1;
 		if (levels != 0) {
@@ -186,6 +188,7 @@ namespace nSCGL
 		GLenum glType = typeMap[gdType];
 
 		glBindTexture(GL_TEXTURE_2D, texture);
+		state.SetTextureImmediately(texture);
 
 		GLint texParamWidth, texParamHeight, internalFormat;
 		glGetTexLevelParameteriv(GL_TEXTURE_2D, level, GL_TEXTURE_WIDTH, &texParamWidth);

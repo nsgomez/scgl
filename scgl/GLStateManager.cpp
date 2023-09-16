@@ -16,19 +16,27 @@ GLenum glBlendMap[11] = {
 	GL_SRC_ALPHA_SATURATE
 };
 
+GLenum matrixModeMap[2] = { GL_MODELVIEW, GL_PROJECTION };
+
 static GLenum drawModeMap[8] = { GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_QUADS, GL_QUAD_STRIP };
 static GLenum glFuncMap[8] = { GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS };
-static GLenum matrixModeMap[] = { GL_MODELVIEW, GL_PROJECTION };
 static GLenum capabilityMap[8] = { GL_ALPHA_TEST, GL_DEPTH_TEST, GL_STENCIL_TEST, GL_CULL_FACE, GL_BLEND, GL_TEXTURE_2D, GL_FOG, 0 };
+
+GLShareableState::GLShareableState() :
+	interleavedFormat(-1),
+	interleavedStride(0),
+	interleavedPointer(nullptr),
+	activeMatrixMode(0), // GL_MODELVIEW
+	glActiveTextureUnit(0)
+{
+}
 
 GLStateManager::GLStateManager() :
 	normalArrayEnabled(false),
 	colorArrayEnabled(false),
 	normalOffset(0),
 	colorOffset(0),
-	interleavedFormat(-1),
-	interleavedStride(0),
-	interleavedPointer(nullptr),
+	shareable(),
 	colorMaskFlag(true),
 	depthFunc(1),         // GL_LESS
 	depthMask(true),
@@ -48,57 +56,32 @@ GLStateManager::GLStateManager() :
 	diffuseLightEnabled(true),
 	ambientLightParams{ 0.2f, 0.2f, 0.2f, 1.0f },
 	diffuseLightParams{ 0.0f, 0.0f, 0.0f, 1.0f },
-	activeMatrixMode(0),  // GL_MODELVIEW
 	isIdentityMatrix{ true, true, true },
 	enabledCapabilities{ false, false, false, false, false, false, false, false },
 	texEnvMode(1),        // GL_MODULATE
 	texEnvColor{ 0.0f, 0.0f, 0.0f, 0.0f },
 	textureParameters{ GL_LINEAR, GL_NEAREST_MIPMAP_LINEAR, GL_REPEAT, GL_REPEAT },
 	textureCoordSource(0),
-	textureUnits(),
 	activeTextureUnit(0),
-	textureStageData()
+	areTextureUnitsDirty(false),
+	textureUnits{
+		GLTextureUnit(0, &shareable),
+		GLTextureUnit(1, &shareable)
+	}
 {
 }
 
 void GLStateManager::ApplyTextureStages() {
 	for (uint32_t i = 0; i < MAX_TEXTURE_UNITS; i++) {
-		TextureStageData& texStage = textureStageData[i];
-		if (!texStage.toBeEnabled) {
-			if (texStage.currentlyEnabled) {
-				glClientActiveTexture(GL_TEXTURE0 + i);
-				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		textureUnits[i].ApplyStateChanges();
 
-				glActiveTexture(GL_TEXTURE0 + i);
-				glDisable(GL_TEXTURE_2D);
-
-				texStage.currentlyEnabled = false;
-				texStage.textureHandle = nullptr;
-			}
-		}
-		else {
-			glClientActiveTexture(GL_TEXTURE0 + i);
-
-			if (!texStage.currentlyEnabled) {
-				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-				glActiveTexture(GL_TEXTURE0 + i);
-				glEnable(GL_TEXTURE_2D);
-
-				texStage.currentlyEnabled = true;
-			}
-
-			int texCoordOffset = RZVertexFormatElementOffset(interleavedFormat, kGDElementType_TexCoord, texStage.coordSrc);
-			void const* textureHandle = reinterpret_cast<uint8_t const*>(interleavedPointer) + texCoordOffset;
-
-			if (texStage.textureHandle != textureHandle) {
-				glTexCoordPointer(2, GL_FLOAT, interleavedStride, textureHandle);
-				texStage.textureHandle = textureHandle;
-			}
-
+		if (textureUnits[i].IsEnabled() && textureUnits[i].needsTextureParamRefresh) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, textureParameters[0]);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, textureParameters[1]);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureParameters[2]);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureParameters[3]);
+
+			textureUnits[i].needsTextureParamRefresh = false;
 		}
 	}
 }
@@ -110,9 +93,6 @@ void GLStateManager::DrawArrays(GLenum gdMode, GLint first, GLsizei count) {
 
 	ApplyTextureStages();
 	glDrawArrays(mode, first, count);
-
-	//glActiveTexture(GL_TEXTURE0 + activeTextureUnit);
-	//glClientActiveTexture(GL_TEXTURE0 + activeTextureUnit);
 }
 
 void GLStateManager::DrawElements(GLenum gdMode, GLsizei count, GLenum gdType, void const* indices) {
@@ -124,13 +104,10 @@ void GLStateManager::DrawElements(GLenum gdMode, GLsizei count, GLenum gdType, v
 
 	ApplyTextureStages();
 	glDrawElements(mode, count, type, indices);
-
-	//glActiveTexture(GL_TEXTURE0 + activeTextureUnit);
-	//glClientActiveTexture(GL_TEXTURE0 + activeTextureUnit);
 }
 
 void GLStateManager::InterleavedArrays(GLenum format, GLsizei stride, void const* pointer) {
-	if (format != interleavedFormat) {
+	if (format != shareable.interleavedFormat) {
 		int normalLength = RZVertexFormatNumElements(format, kGDElementType_Normal);
 		if (normalLength == 0) {
 			if (normalArrayEnabled) {
@@ -178,9 +155,9 @@ void GLStateManager::InterleavedArrays(GLenum format, GLsizei stride, void const
 		glColorPointer(GL_BGRA, GL_UNSIGNED_BYTE, stride, reinterpret_cast<uint8_t const*>(pointer) + colorOffset);
 	}
 
-	interleavedPointer = pointer;
-	interleavedFormat = format;
-	interleavedStride = stride;
+	shareable.interleavedPointer = pointer;
+	shareable.interleavedFormat = format;
+	shareable.interleavedStride = stride;
 }
 
 void GLStateManager::ColorMask(bool flag) {
@@ -327,28 +304,28 @@ void GLStateManager::EnableVertexColors(bool ambient, bool diffuse) {
 void GLStateManager::MatrixMode(GLenum mode) {
 	SIZE_CHECK(mode, matrixModeMap);
 
-	if (activeMatrixMode != mode) {
+	if (shareable.activeMatrixMode != mode) {
 		glMatrixMode(matrixModeMap[mode]);
 	}
 
-	activeMatrixMode = mode;
+	shareable.activeMatrixMode = mode;
 }
 
 void GLStateManager::LoadMatrix(GLfloat const* m) {
 	glLoadMatrixf(m);
-	isIdentityMatrix[activeMatrixMode] = false;
+	isIdentityMatrix[shareable.activeMatrixMode] = false;
 }
 
 void GLStateManager::LoadIdentity(void) {
-	if (!isIdentityMatrix[activeMatrixMode]) {
+	if (!isIdentityMatrix[shareable.activeMatrixMode]) {
 		glLoadIdentity();
-		isIdentityMatrix[activeMatrixMode] = true;
+		isIdentityMatrix[shareable.activeMatrixMode] = true;
 	}
 }
 
 void GLStateManager::Enable(GLenum gdCap) {
 	if (gdCap == kGDCapability_Texture2D) {
-		textureStageData[activeTextureUnit].toBeEnabled = true;
+		areTextureUnitsDirty |= textureUnits[activeTextureUnit].Enable();
 	}
 	else if (!enabledCapabilities[gdCap] && gdCap != kGDCapability_Unused0) {
 		SIZE_CHECK(gdCap, capabilityMap);
@@ -362,7 +339,7 @@ void GLStateManager::Enable(GLenum gdCap) {
 
 void GLStateManager::Disable(GLenum gdCap) {
 	if (gdCap == kGDCapability_Texture2D) {
-		textureStageData[activeTextureUnit].toBeEnabled = false;
+		areTextureUnitsDirty |= textureUnits[activeTextureUnit].Disable();
 	}
 	else if (gdCap != kGDCapability_Unused0 && enabledCapabilities[gdCap]) {
 		SIZE_CHECK(gdCap, capabilityMap);
@@ -381,7 +358,7 @@ bool GLStateManager::IsEnabled(GLenum gdCap) {
 		return enabledCapabilities[gdCap];
 	}
 	else {
-		return textureStageData[activeTextureUnit].currentlyEnabled;
+		return textureUnits[activeTextureUnit].IsEnabled();
 	}
 }
 
@@ -410,106 +387,40 @@ void GLStateManager::TexParameter(GLenum target, GLenum pname, GLint param) {
 	SIZE_CHECK(param, texParamMap);
 
 	textureParameters[pname] = texParamMap[param];
+	for (int i = 0; i < MAX_TEXTURE_UNITS; i++) {
+		textureUnits[0].needsTextureParamRefresh = true;
+	}
 }
 
 void GLStateManager::TexStage(GLenum texUnit) {
 	activeTextureUnit = texUnit;
+
 	glClientActiveTexture(GL_TEXTURE0 + texUnit);
 	glActiveTexture(GL_TEXTURE0 + texUnit);
+
+	shareable.glActiveTextureUnit = texUnit;
 }
 
 void GLStateManager::TexStageCoord(uint32_t gdTexCoordSource) {
-	static float sCoord[] = { 1.0f, 0.0f, 0.0f, 0.0f };
-	static float tCoord[] = { 0.0f, 1.0f, 0.0f, 0.0f };
-	static float rCoord[] = { 0.0f, 0.0f, 1.0f, 0.0f };
-
-	textureStageData[activeTextureUnit].coordSrc = gdTexCoordSource;
-
-	//if (textureCoordSource != gdTexCoordSource) {
-		if ((gdTexCoordSource & 0xfffffff8) == 0x10) { // mimics D3DTSS_TCI_CAMERASPACEPOSITION
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-			glLoadIdentity();
-
-			glTexGenfv(GL_S, GL_EYE_PLANE, sCoord);
-			glTexGenfv(GL_T, GL_EYE_PLANE, tCoord);
-			glTexGenfv(GL_R, GL_EYE_PLANE, rCoord);
-
-			glPopMatrix();
-			glEnable(GL_TEXTURE_GEN_S);
-			glEnable(GL_TEXTURE_GEN_T);
-			glEnable(GL_TEXTURE_GEN_R);
-			glMatrixMode(matrixModeMap[activeMatrixMode]);
-		}
-		// There are technically TexGen modes for 0x20 (D3DTSS_TCI_CAMERASPACENORMAL) and
-		// 0x30 (D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR), but SimCity 4 doesn't seem to
-		// use them, so they're left unimplemented.
-		else {
-			glDisable(GL_TEXTURE_GEN_S);
-			glDisable(GL_TEXTURE_GEN_T);
-			glDisable(GL_TEXTURE_GEN_R);
-		}
-
-		textureCoordSource = gdTexCoordSource;
-	//}
+	areTextureUnitsDirty |= textureUnits[activeTextureUnit].TexStageCoord(gdTexCoordSource);
 }
 
 void GLStateManager::TexStageMatrix(GLfloat const* matrix, uint32_t unknown0, uint32_t unknown1, uint32_t gdTexMatFlags) {
-	if (matrix == nullptr) {
-		//if (!isIdentityMatrix[GLStatefulMatrix_Texture]) {
-			glMatrixMode(GL_TEXTURE);
-			glLoadIdentity();
-			glMatrixMode(matrixModeMap[activeMatrixMode]);
+	areTextureUnitsDirty |= textureUnits[activeTextureUnit].TexStageMatrix(matrix, unknown0, unknown1, gdTexMatFlags);
+}
 
-			isIdentityMatrix[GLStatefulMatrix_Texture] = true;
-		//}
-
-		return;
-	}
-
-	glMatrixMode(GL_TEXTURE);
-	if ((gdTexMatFlags & 3) == 1 && unknown0 == 4 && unknown1 == 2) {
-		GLfloat replacementMatrix[16];
-		GLfloat* replacementPtr = replacementMatrix;
-		for (int i = 0; i < 16; i++) {
-			replacementPtr[i] = matrix[i];
-		}
-
-		replacementMatrix[2] = 0.0f;
-		replacementMatrix[6] = 0.0f;
-		replacementMatrix[10] = 1.0f;
-		replacementMatrix[14] = 0.0f;
-
-		replacementMatrix[3] = 0.0f;
-		replacementMatrix[7] = 0.0f;
-		replacementMatrix[11] = 0.0f;
-		replacementMatrix[15] = 1.0f;
-
-		glLoadMatrixf(replacementMatrix);
-	}
-	else if ((gdTexMatFlags & 1) == 0 || (unknown0 > 3 && (unknown1 > 3 || (gdTexMatFlags & 2) == 0))) {
-		glLoadMatrixf(matrix);
-	}
-	else {
-		NOTIMPL();
-	}
-
-	isIdentityMatrix[GLStatefulMatrix_Texture] = false;
-	glMatrixMode(matrixModeMap[activeMatrixMode]);
+void GLStateManager::BindTexture(GLuint textureId) {
+	areTextureUnitsDirty |= textureUnits[activeTextureUnit].SetTexture(textureId);
 }
 
 void GLStateManager::SetTexture(GLuint textureId, GLenum texUnit) {
-	glActiveTexture(GL_TEXTURE0 + texUnit);
-	glBindTexture(GL_TEXTURE_2D, textureId);
-	glActiveTexture(GL_TEXTURE0 + activeTextureUnit);
+	areTextureUnitsDirty |= textureUnits[texUnit].SetTexture(textureId);
+}
+
+void GLStateManager::SetTextureImmediately(GLuint textureId) {
+	textureUnits[activeTextureUnit].SetTextureImmediately(textureId);
 }
 
 intptr_t GLStateManager::GetTexture(GLenum texUnit) {
-	glActiveTexture(GL_TEXTURE0 + texUnit);
-
-	int activeTexture;
-	glGetIntegerv(GL_TEXTURE_BINDING_2D, &activeTexture);
-
-	glActiveTexture(GL_TEXTURE0 + activeTextureUnit);
-	return activeTexture;
+	return textureUnits[texUnit].GetTexture();
 }
