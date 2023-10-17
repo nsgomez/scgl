@@ -163,7 +163,7 @@ namespace nSCGL
 				pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
 				pfd.iPixelType = PFD_TYPE_RGBA;
 				pfd.cAlphaBits = (newMode.depth == 32) ? 8 : 1;
-				pfd.cColorBits = (newMode.depth == 32) ? 24 : 16;
+				pfd.cColorBits = (newMode.depth == 32) ? 24 : 15;
 				pfd.cDepthBits = (newMode.depth == 32) ? 24 : 16;
 				pfd.cStencilBits = 8;
 				pfd.iLayerType = PFD_MAIN_PLANE;
@@ -210,7 +210,7 @@ namespace nSCGL
 			wglMakeCurrent(hdc, static_cast<HGLRC>(glContext));
 
 			if (supportedExtensions.swapControl) {
-				wglSwapIntervalEXT(-1);
+				wglSwapIntervalEXT(0);
 			}
 
 			// Window should now be ready to go, show it and wrap up initialization

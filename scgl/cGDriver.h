@@ -65,7 +65,9 @@ namespace nSCGL
 		// We're not expecting to use a lot of buffer regions simultaneously, so we'll use an
 		// 8-bit mask to indicate which regions are allocated and free.
 		uint8_t bufferRegionFlags;
-		void* bufferRegionHandles[MAX_BUFFER_REGIONS];
+		uint32_t framebufferHandles[MAX_BUFFER_REGIONS];
+		uint32_t renderbufferHandles[MAX_BUFFER_REGIONS];
+		uint32_t framebufferMasks[MAX_BUFFER_REGIONS];
 
 	private:
 		struct {
