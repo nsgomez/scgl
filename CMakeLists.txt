@@ -51,13 +51,13 @@ target_include_directories(SCGL PRIVATE "${CMAKE_SOURCE_DIR}/vendor/framework/in
 # Flags for debug builds.
 target_compile_options(SCGL PRIVATE
                        $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:Debug>>:/W3 /utf-8 /MP>
-                       $<$<AND:$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>,$<CONFIG:Debug>>:-Wall>
+                       $<$<AND:$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>,$<CONFIG:Debug>>:-Wall -fpermissive>
 )
 
 # For release
 target_compile_options(SCGL PRIVATE
                        $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:Release>>:/W3 /utf-8 /Gw /Zc:threadSafeInit- /O2>
-                       $<$<AND:$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>,$<CONFIG:Release>>:-Wall -O3 -flto>
+                       $<$<AND:$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>,$<CONFIG:Release>>:-Wall -fpermissive -O3 -flto>
 )
 
 # Definitions

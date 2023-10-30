@@ -60,7 +60,7 @@ namespace nSCGL
 			windowHeight = newMode.height;
 
 			if (hwndProc == nullptr) {
-				hwndProc = (void *)DefWindowProcA;
+				hwndProc = DefWindowProcA;
 			}
 
 			DestroyOpenGLContext();
