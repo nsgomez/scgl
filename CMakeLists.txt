@@ -62,8 +62,7 @@ target_compile_options(SCGL PRIVATE
 
 # Definitions
 target_compile_definitions(SCGL PRIVATE
-                           $<$<CONFIG:Debug>:WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;scgl_EXPORTS;_WINDOWS;_USRDLL;__FUNCSIG__=__PRETTY_FUNCTION__>
-                           $<$<CONFIG:Release>:WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;scgl_EXPORTS;_WINDOWS;_USRDLL;__FUNCSIG__=__PRETTY_FUNCTION__>
+                           $<$<AND:$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>,$<CONFIG:Debug>>:__FUNCSIG__=__PRETTY_FUNCTION__>
 )
 
 # Should come with MinGW
