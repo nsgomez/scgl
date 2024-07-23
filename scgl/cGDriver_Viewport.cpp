@@ -221,6 +221,7 @@ namespace nSCGL
 			if (supportedExtensions.debugOutput && glDebugMessageCallback != nullptr) {
 				glDebugMessageCallback(LogGLMessage, nullptr);
 				glEnable(GL_DEBUG_OUTPUT);
+				glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 			}
 #endif
 
