@@ -91,6 +91,7 @@ namespace nSCGL
 
 		if (!supportedExtensions.bgraColor) {
 			MessageBoxA(NULL, "Your graphics card does not support BGRA color order. SimCity 4 will fall back to software rendering.", "SCGL failed to start", MB_ICONERROR);
+			return false;
 		}
 
 		// Get device info while the false context is still up
