@@ -253,7 +253,6 @@ namespace nSCGL
 	}
 
 	void cGDriver::Flush(void) {
-		glFlush();
 		SwapBuffers(static_cast<HDC>(deviceContext));
 	}
 
