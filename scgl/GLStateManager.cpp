@@ -153,6 +153,7 @@ void GLStateManager::InterleavedArrays(GLenum format, GLsizei stride, void const
 		// These extensions did not exist when SimCity 4 was released, so their workaround was to
 		// use the CPU to swap the order of color components. That's slow - let's never do that.
 		glColorPointer(GL_BGRA, GL_UNSIGNED_BYTE, stride, reinterpret_cast<uint8_t const*>(pointer) + colorOffset);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseLightParams);
 	}
 
 	shareable.interleavedPointer = pointer;
@@ -250,21 +251,23 @@ void GLStateManager::ShadeModel(GLenum mode) {
 }
 
 void GLStateManager::ColorMultiplier(float r, float g, float b) {
-	//if (ambientLightParams[0] != r || ambientLightParams[1] != g || ambientLightParams[2] != b) {
+	if (ambientLightParams[0] != r || ambientLightParams[1] != g || ambientLightParams[2] != b) {
 		ambientLightParams[0] = r;
 		ambientLightParams[1] = g;
 		ambientLightParams[2] = b;
 
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLightParams);
-	//}
+	}
 }
 
 void GLStateManager::AlphaMultiplier(float a) {
-	//if (diffuseLightParams[3] != a) {
+	if (diffuseLightParams[3] != a) {
 		diffuseLightParams[3] = a;
 
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseLightParams);
-	//}
+		if (ambientLightEnabled || diffuseLightEnabled) {
+			glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseLightParams);
+		}
+	}
 }
 
 void GLStateManager::EnableVertexColors(bool ambient, bool diffuse) {
@@ -298,6 +301,9 @@ void GLStateManager::EnableVertexColors(bool ambient, bool diffuse) {
 		}
 
 		glEnable(GL_COLOR_MATERIAL);
+		if (!oldFlags) {
+			glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseLightParams);
+		}
 	//}
 }
 
