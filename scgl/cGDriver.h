@@ -102,6 +102,7 @@ namespace nSCGL
 		void* secondaryWindow;
 		void* secondaryDeviceContext;
 		void* pixels;
+		void* lineBrush;
 #endif
 
 	private:

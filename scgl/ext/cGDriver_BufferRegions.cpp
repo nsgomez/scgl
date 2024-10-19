@@ -112,10 +112,7 @@ namespace nSCGL
 			InvalidateRect((HWND)secondaryWindow, nullptr, TRUE);
 
 			PAINTSTRUCT ps;
-			DWORD dwError;
 			HDC hdc = BeginPaint((HWND)secondaryWindow, &ps);
-
-			dwError = GetLastError();
 
 			BITMAPINFO bm;
 			bm.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -134,7 +131,7 @@ namespace nSCGL
 			bm.bmiColors->rgbRed = 255;
 			bm.bmiColors->rgbReserved = 0;
 
-			dwError = ::SetDIBitsToDevice(
+			::SetDIBitsToDevice(
 				hdc,
 				dstX0,
 				windowHeight - dstY1,
@@ -148,11 +145,14 @@ namespace nSCGL
 				&bm,
 				DIB_RGB_COLORS);
 
-			dwError = GetLastError();
+			RECT rect;
+			rect.left = srcX0;
+			rect.right = rect.left + width;
+			rect.top = windowHeight - dstY1;
+			rect.bottom = rect.top + height;
 
+			FrameRect(hdc, &rect, (HBRUSH)lineBrush);
 			EndPaint((HWND)secondaryWindow, &ps);
-
-			dwError = GetLastError();
 		}
 #endif
 

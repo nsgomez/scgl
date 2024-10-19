@@ -251,6 +251,7 @@ namespace nSCGL
 
 				ShowWindow(secondaryHwnd, SW_SHOWNORMAL);
 				pixels = new char[3 * newMode.width * newMode.height];
+				lineBrush = CreateSolidBrush(RGB(255, 0, 0));
 			}
 #endif
 
