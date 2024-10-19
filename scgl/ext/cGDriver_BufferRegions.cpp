@@ -85,23 +85,36 @@ namespace nSCGL
 		return true;
 	}
 
-	bool cGDriver::ReadBufferRegion(uint32_t region, GLint x0, GLint y0, GLsizei width, GLsizei height, int32_t unused0, int32_t unused1) {
+	// Note: officially, the parameter order is (region, srcX0, srcY0, width, height, dstX0, dstY0)
+	// But SimGL seems to expect a DirectX coordinate system where the origin is at the top left at the window,
+	// but OpenGL puts the origin at the *bottom* left, so we need to invert the Y axis.
+	bool cGDriver::ReadBufferRegion(uint32_t region, GLint srcX0, GLint dstY0, GLsizei width, GLsizei height, int32_t dstX0, int32_t srcY0) {
 		uint32_t bufferRegionIndex = region - 1;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferHandles[bufferRegionIndex]);
 
-		GLint x1 = x0 + width;
-		GLint y1 = y0 + height;
+		GLint srcX1 = srcX0 + width;
+		GLint srcY1 = srcY0 + height;
 
-		glBlitFramebuffer(x0, y0, x1, y1, x0, y0, x1, y1, framebufferMasks[bufferRegionIndex], GL_NEAREST);
+		GLint dstX1 = dstX0 + width;
+		GLint dstY1 = dstY0 + height;
+
+		glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, framebufferMasks[bufferRegionIndex], GL_NEAREST);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
 		return true;
 	}
 
-	bool cGDriver::DrawBufferRegion(uint32_t region, GLint x, GLint y, GLsizei width, GLsizei height, GLint xDest, GLint yDest) {
+	bool cGDriver::DrawBufferRegion(uint32_t region, GLint srcX0, GLint dstY0, GLsizei width, GLsizei height, GLint dstX0, GLint srcY0) {
 		uint32_t bufferRegionIndex = region - 1;
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferHandles[bufferRegionIndex]);
 
-		glBlitFramebuffer(x, yDest, x + width, yDest + height, xDest, y, xDest + width, y + height, framebufferMasks[bufferRegionIndex], GL_NEAREST);
+		GLint srcX1 = srcX0 + width;
+		GLint srcY1 = srcY0 + height;
+
+		GLint dstX1 = dstX0 + width;
+		GLint dstY1 = dstY0 + height;
+
+		glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, framebufferMasks[bufferRegionIndex], GL_NEAREST);
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 		return true;
 	}
