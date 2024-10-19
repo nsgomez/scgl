@@ -213,7 +213,7 @@ namespace nSCGL
 					dwExtStyle,
 					"GDriverClass--OpenGLDebug",
 					"GDriverWindow--OpenGLDebug",
-					(dwStyle) & ~(WS_EX_APPWINDOW | WS_POPUP),
+					(dwStyle) & ~(WS_EX_APPWINDOW | WS_POPUP | WS_SYSMENU),
 					wndRect.left,
 					wndRect.top,
 					wndRect.right - wndRect.left,
