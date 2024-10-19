@@ -85,20 +85,27 @@ namespace nSCGL
 		return true;
 	}
 
-	// Note: officially, the parameter order is (region, srcX0, srcY0, width, height, dstX0, dstY0)
-	// But SimGL seems to expect a DirectX coordinate system where the origin is at the top left at the window,
-	// but OpenGL puts the origin at the *bottom* left, so we need to invert the Y axis.
-	bool cGDriver::ReadBufferRegion(uint32_t region, GLint srcX0, GLint dstY0, GLsizei width, GLsizei height, int32_t dstX0, int32_t srcY0) {
+	bool cGDriver::ReadBufferRegion(uint32_t region, GLint dstX, GLint dstY, GLsizei width, GLsizei height, int32_t srcX, int32_t srcY) {
 		uint32_t bufferRegionIndex = region - 1;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferHandles[bufferRegionIndex]);
 
-		GLint srcX1 = srcX0 + width;
-		GLint srcY1 = srcY0 + height;
+		RECT glSrc, glDst;
+		glSrc.left = srcX;
+		glSrc.right = srcX + width;
 
-		GLint dstX1 = dstX0 + width;
-		GLint dstY1 = dstY0 + height;
+		glDst.left = dstX;
+		glDst.right = dstX + width;
 
-		glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, framebufferMasks[bufferRegionIndex], GL_NEAREST);
+		// SimGL expects a DirectX coordinate system where origin is at the top left, but OpenGL puts origin at *bottom* left.
+		// The input coordinates need to be corrected by inverting the Y axis.
+		glSrc.top = windowHeight - srcY;
+		glDst.top = windowHeight - dstY;
+
+		// Similarly, we need to *subtract* `height` from the y-coords to build the `src` and `dst` rectangles.
+		glSrc.bottom = glSrc.top - height;
+		glDst.bottom = glDst.top - height;
+
+		glBlitFramebuffer(glSrc.left, glSrc.top, glSrc.right, glSrc.bottom, glDst.left, glDst.top, glDst.right, glDst.bottom, framebufferMasks[bufferRegionIndex], GL_NEAREST);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
 #ifndef NDEBUG
@@ -107,7 +114,7 @@ namespace nSCGL
 			glFinish();
 
 			memset(pixels, 127, width * height * 3);
-			glReadPixels(srcX0, srcY0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+			glReadPixels(srcX, glSrc.bottom, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 
 			InvalidateRect((HWND)secondaryWindow, nullptr, TRUE);
 
@@ -133,8 +140,8 @@ namespace nSCGL
 
 			::SetDIBitsToDevice(
 				hdc,
-				dstX0,
-				windowHeight - dstY1,
+				dstX,
+				dstY,
 				width,
 				height,
 				0,
@@ -146,9 +153,9 @@ namespace nSCGL
 				DIB_RGB_COLORS);
 
 			RECT rect;
-			rect.left = srcX0;
+			rect.left = dstX;
 			rect.right = rect.left + width;
-			rect.top = windowHeight - dstY1;
+			rect.top = dstY;
 			rect.bottom = rect.top + height;
 
 			FrameRect(hdc, &rect, (HBRUSH)lineBrush);
@@ -159,17 +166,23 @@ namespace nSCGL
 		return true;
 	}
 
-	bool cGDriver::DrawBufferRegion(uint32_t region, GLint srcX0, GLint dstY0, GLsizei width, GLsizei height, GLint dstX0, GLint srcY0) {
+	bool cGDriver::DrawBufferRegion(uint32_t region, GLint srcX, GLint srcY, GLsizei width, GLsizei height, GLint dstX, GLint dstY) {
 		uint32_t bufferRegionIndex = region - 1;
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferHandles[bufferRegionIndex]);
 
-		GLint srcX1 = srcX0 + width;
-		GLint srcY1 = srcY0 + height;
+		RECT glSrc;
+		glSrc.left = srcX;
+		glSrc.right = srcX + width;
+		glSrc.bottom = windowHeight - srcY;
+		glSrc.top = glSrc.bottom - height;
 
-		GLint dstX1 = dstX0 + width;
-		GLint dstY1 = dstY0 + height;
+		RECT glDst;
+		glDst.left = dstX;
+		glDst.right = dstX + width;
+		glDst.bottom = windowHeight - dstY;
+		glDst.top = glDst.bottom - height;
 
-		glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, framebufferMasks[bufferRegionIndex], GL_NEAREST);
+		glBlitFramebuffer(glSrc.left, glSrc.bottom, glSrc.right, glSrc.top, glDst.left, glDst.bottom, glDst.right, glDst.top, framebufferMasks[bufferRegionIndex], GL_NEAREST);
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 		return true;
 	}
