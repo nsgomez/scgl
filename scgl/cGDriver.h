@@ -98,6 +98,12 @@ namespace nSCGL
 		void* deviceContext;
 		void* glContext;
 
+#ifndef NDEBUG
+		void* secondaryWindow;
+		void* secondaryDeviceContext;
+		void* pixels;
+#endif
+
 	private:
 		void SetLastError(DriverError err);
 		void DestroyOpenGLContext();

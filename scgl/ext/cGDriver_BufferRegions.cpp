@@ -101,6 +101,61 @@ namespace nSCGL
 		glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, framebufferMasks[bufferRegionIndex], GL_NEAREST);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
+#ifndef NDEBUG
+		if (framebufferMasks[bufferRegionIndex] == GL_COLOR_BUFFER_BIT)
+		{
+			glFinish();
+
+			memset(pixels, 127, width * height * 3);
+			glReadPixels(srcX0, srcY0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+
+			InvalidateRect((HWND)secondaryWindow, nullptr, TRUE);
+
+			PAINTSTRUCT ps;
+			DWORD dwError;
+			HDC hdc = BeginPaint((HWND)secondaryWindow, &ps);
+
+			dwError = GetLastError();
+
+			BITMAPINFO bm;
+			bm.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+			bm.bmiHeader.biWidth = width;
+			bm.bmiHeader.biHeight = height;
+			bm.bmiHeader.biPlanes = 1;
+			bm.bmiHeader.biBitCount = 24;
+			bm.bmiHeader.biCompression = BI_RGB;
+			bm.bmiHeader.biSizeImage = 0;
+			bm.bmiHeader.biXPelsPerMeter = 2835;
+			bm.bmiHeader.biYPelsPerMeter = 2835;
+			bm.bmiHeader.biClrUsed = 0;
+			bm.bmiHeader.biClrImportant = 0;
+			bm.bmiColors->rgbBlue = 255;
+			bm.bmiColors->rgbGreen = 255;
+			bm.bmiColors->rgbRed = 255;
+			bm.bmiColors->rgbReserved = 0;
+
+			dwError = ::SetDIBitsToDevice(
+				hdc,
+				dstX0,
+				windowHeight - dstY1,
+				width,
+				height,
+				0,
+				0,
+				0,
+				height,
+				pixels,
+				&bm,
+				DIB_RGB_COLORS);
+
+			dwError = GetLastError();
+
+			EndPaint((HWND)secondaryWindow, &ps);
+
+			dwError = GetLastError();
+		}
+#endif
+
 		return true;
 	}
 

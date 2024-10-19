@@ -5,6 +5,24 @@
 namespace nSCGL
 {
 	bool cGDriver::Init(void) {
+#ifndef NDEBUG
+		WNDCLASS wcDebug{};
+		wcDebug.style = CS_OWNDC;
+		wcDebug.lpfnWndProc = DefWindowProcA;
+		wcDebug.hInstance = GetModuleHandle(nullptr);
+		wcDebug.lpszClassName = "GDriverClass--OpenGLDebug";
+
+		UnregisterClass(wcDebug.lpszClassName, nullptr);
+
+		if (!RegisterClass(&wcDebug)) {
+			DWORD err = GetLastError();
+			if (err != ERROR_CLASS_ALREADY_EXISTS) {
+				MessageBoxA(NULL, "Failed to set up an OpenGL debug window class", "SCGL failed to start", MB_ICONERROR);
+				return false;
+			}
+		}
+#endif
+
 		// Create an invisible default window to set up an initial OpenGL context
 		WNDCLASS wc{};
 		wc.style = CS_OWNDC;

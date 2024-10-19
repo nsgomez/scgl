@@ -207,6 +207,53 @@ namespace nSCGL
 				return;
 			}
 
+#ifndef NDEBUG
+			{
+				HWND secondaryHwnd = CreateWindowExA(
+					dwExtStyle,
+					"GDriverClass--OpenGLDebug",
+					"GDriverWindow--OpenGLDebug",
+					(dwStyle) & ~(WS_EX_APPWINDOW | WS_POPUP),
+					wndRect.left,
+					wndRect.top,
+					wndRect.right - wndRect.left,
+					wndRect.bottom - wndRect.top,
+					nullptr,
+					nullptr,
+					GetModuleHandle(nullptr),
+					nullptr);
+
+				if (secondaryHwnd == nullptr) {
+					DWORD error = GetLastError();
+					MessageBoxA(NULL, "Failed to create window.", "SCGL video mode error", MB_ICONWARNING);
+					return;
+				}
+
+				HDC secondaryDC = GetDC(secondaryHwnd);
+				secondaryWindow = secondaryHwnd;
+				secondaryDeviceContext = secondaryDC;
+
+				pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+				pfd.nVersion = 1;
+				pfd.dwFlags = PFD_DRAW_TO_WINDOW;
+				pfd.iPixelType = PFD_TYPE_RGBA;
+				pfd.cAlphaBits = (newMode.depth == 32) ? 8 : 1;
+				pfd.cColorBits = (newMode.depth == 32) ? 24 : 15;
+				pfd.cDepthBits = (newMode.depth == 32) ? 24 : 16;
+				pfd.cStencilBits = 8;
+				pfd.iLayerType = PFD_MAIN_PLANE;
+
+				pixelFormat = ChoosePixelFormat(secondaryDC, &pfd);
+
+				if (!SetPixelFormat(secondaryDC, pixelFormat, &pfd)) {
+					MessageBoxA(NULL, "Failed to set video mode on debug window.", "SCGL video mode error", MB_ICONWARNING);
+				}
+
+				ShowWindow(secondaryHwnd, SW_SHOWNORMAL);
+				pixels = new char[3 * newMode.width * newMode.height];
+			}
+#endif
+
 			wglMakeCurrent(hdc, static_cast<HGLRC>(glContext));
 
 			if (supportedExtensions.swapControl) {
