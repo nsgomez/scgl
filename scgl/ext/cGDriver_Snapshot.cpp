@@ -83,6 +83,10 @@ namespace nSCGL
 			buffer->Unlock(cIGZBuffer::eLockFlags::IsDirtyUpdate);
 		}
 
+#ifndef NDEBUG
+		glPixelStorei(GL_PACK_ALIGNMENT, 4);
+#endif
+
 		delete[] colorBytes;
 		return buffer;
 	}
