@@ -52,8 +52,8 @@ GLStateManager::GLStateManager() :
 	alphaFunc(7),         // GL_ALWAYS
 	alphaRef(0.0f),
 	shadeModel(1),        // GL_SMOOTH,
-	ambientLightEnabled(true),
-	diffuseLightEnabled(true),
+	ambientLightEnabled(false),
+	diffuseLightEnabled(false),
 	ambientLightParams{ 0.2f, 0.2f, 0.2f, 1.0f },
 	diffuseLightParams{ 0.0f, 0.0f, 0.0f, 1.0f },
 	isIdentityMatrix{ true, true, true },
@@ -271,12 +271,12 @@ void GLStateManager::AlphaMultiplier(float a) {
 }
 
 void GLStateManager::EnableVertexColors(bool ambient, bool diffuse) {
-	//if (ambientLightEnabled != ambient || diffuseLightEnabled != diffuse) {
-		ambientLightEnabled = ambient;
-		diffuseLightEnabled = diffuse;
-
+	if (ambientLightEnabled != ambient || diffuseLightEnabled != diffuse) {
 		uint8_t oldFlags = (ambientLightEnabled ? 1 : 0) | (diffuseLightEnabled ? 2 : 0);
 		uint8_t newFlags = (ambient ? 1 : 0) | (diffuse ? 2 : 0);
+
+		ambientLightEnabled = ambient;
+		diffuseLightEnabled = diffuse;
 
 		switch (newFlags) {
 		case 0:
@@ -300,11 +300,11 @@ void GLStateManager::EnableVertexColors(bool ambient, bool diffuse) {
 			break;
 		}
 
-		glEnable(GL_COLOR_MATERIAL);
 		if (!oldFlags) {
+			glEnable(GL_COLOR_MATERIAL);
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseLightParams);
 		}
-	//}
+	}
 }
 
 void GLStateManager::MatrixMode(GLenum mode) {
