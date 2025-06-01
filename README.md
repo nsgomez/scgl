@@ -25,6 +25,8 @@ SCGL depends on these third-party projects, which are already included in the `v
 
 ## License
 
-This project is licensed under the [GNU Lesser General Public License, version 2.1](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html).
+This project is licensed under the [GNU Lesser General Public License, version 2.1](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html)
+or (at your option) any later version published by the Free Software Foundation.
+
 You may dynamically link it with proprietary software such as SimCity 4, but changes you make to SCGL must also be
-shared under the LGPLv2.1 license.
+shared under the LGPLv2.1 license or later.
