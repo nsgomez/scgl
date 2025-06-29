@@ -18,8 +18,8 @@
 
 #pragma once
 #define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#include <GL/GL.h>
+#include <windows.h>
+#include <GL/gl.h>
 
 // ---------------------- Begin GLext subset ----------------------
 #ifndef APIENTRY
