@@ -22,19 +22,23 @@
 namespace nSCGL
 {
 	void cGDriver::EnableLighting(bool flag) {
+		state.FlushPendingDraws();
 		flag ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
 	}
 
 	void cGDriver::EnableLight(uint32_t light, bool flag) {
+		state.FlushPendingDraws();
 		flag ? glEnable(GL_LIGHT0 + light) : glDisable(GL_LIGHT0 + light);
 	}
 
 	void cGDriver::LightModelAmbient(float r, float g, float b, float a) {
+		state.FlushPendingDraws();
 		GLfloat params[] = { r, g, b, a };
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, params);
 	}
 
 	void cGDriver::LightColor(uint32_t lightIndex, uint32_t gdParam, float const* color) {
+		state.FlushPendingDraws();
 		static GLenum colorParamMap[] = { GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR };
 		SIZE_CHECK(gdParam, colorParamMap);
 
@@ -43,6 +47,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::LightColor(uint32_t lightIndex, float const* ambient, float const* diffuse, float const* specular) {
+		state.FlushPendingDraws();
 		GLenum light = GL_LIGHT0 + lightIndex;
 		if (ambient) {
 			glLightfv(light, GL_AMBIENT, ambient);
@@ -58,6 +63,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::LightPosition(uint32_t lightIndex, float const* position) {
+		state.FlushPendingDraws();
 		glLightfv(GL_LIGHT0 + lightIndex, GL_POSITION, position);
 	}
 
@@ -66,6 +72,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::MaterialColor(uint32_t gdParam, float const* color) {
+		state.FlushPendingDraws();
 		static GLenum materialParamMap[] = { GL_AMBIENT, GL_DIFFUSE, GL_SPECULAR, GL_EMISSION, GL_SHININESS };
 		SIZE_CHECK(gdParam, materialParamMap);
 
@@ -80,6 +87,7 @@ namespace nSCGL
 		float const* emission,
 		float shininess)
 	{
+		state.FlushPendingDraws();
 		if (ambient) {
 			glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
 		}

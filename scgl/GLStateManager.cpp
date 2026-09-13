@@ -36,7 +36,8 @@ GLenum glBlendMap[11] = {
 
 GLenum matrixModeMap[2] = { GL_MODELVIEW, GL_PROJECTION };
 
-static GLenum drawModeMap[8] = { GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_QUADS, GL_QUAD_STRIP };
+// Shared with the VertexBuffers extension compilation unit, can't be static.
+GLenum drawModeMap[8] = { GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_QUADS, GL_QUAD_STRIP };
 static GLenum glFuncMap[8] = { GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS };
 static GLenum capabilityMap[8] = { GL_ALPHA_TEST, GL_DEPTH_TEST, GL_STENCIL_TEST, GL_CULL_FACE, GL_BLEND, GL_TEXTURE_2D, GL_FOG, 0 };
 
@@ -85,7 +86,9 @@ GLStateManager::GLStateManager() :
 	textureUnits{
 		GLTextureUnit(0, &shareable),
 		GLTextureUnit(1, &shareable)
-	}
+	},
+	pendingDrawMode(0),
+	pendingDrawType(0)
 {
 }
 
@@ -105,6 +108,9 @@ void GLStateManager::ApplyTextureStages() {
 }
 
 void GLStateManager::DrawArrays(GLenum gdMode, GLint first, GLsizei count) {
+	// A different kind of draw call always breaks a pending DrawElements batch.
+	FlushPendingDraws();
+
 	SIZE_CHECK(gdMode, drawModeMap);
 
 	GLenum mode = drawModeMap[gdMode];
@@ -120,11 +126,45 @@ void GLStateManager::DrawElements(GLenum gdMode, GLsizei count, GLenum gdType, v
 	GLenum mode = drawModeMap[gdMode];
 	GLenum type = typeMap[gdType];
 
+	// See issue #9: rather than calling glDrawElements once per call here, accumulate
+	// consecutive calls that share the same primitive/index type and issue them all
+	// together in FlushPendingDraws(). A call with a *different* mode/type can't be
+	// folded into the current batch, so flush what's pending first.
+	if (!pendingDrawCounts.empty() && (mode != pendingDrawMode || type != pendingDrawType)) {
+		FlushPendingDraws();
+	}
+
+	pendingDrawMode = mode;
+	pendingDrawType = type;
+	pendingDrawCounts.push_back(count);
+	pendingDrawIndices.push_back(indices);
+}
+
+void GLStateManager::FlushPendingDraws(void) {
+	if (pendingDrawCounts.empty()) {
+		return;
+	}
+
 	ApplyTextureStages();
-	glDrawElements(mode, count, type, indices);
+
+	if (pendingDrawCounts.size() == 1 || glMultiDrawElementsEXT == nullptr) {
+		for (size_t i = 0; i < pendingDrawCounts.size(); i++) {
+			glDrawElements(pendingDrawMode, pendingDrawCounts[i], pendingDrawType, pendingDrawIndices[i]);
+		}
+	}
+	else {
+		glMultiDrawElementsEXT(pendingDrawMode, pendingDrawCounts.data(), pendingDrawType, pendingDrawIndices.data(), static_cast<GLsizei>(pendingDrawCounts.size()));
+	}
+
+	pendingDrawCounts.clear();
+	pendingDrawIndices.clear();
 }
 
 void GLStateManager::InterleavedArrays(GLenum format, GLsizei stride, void const* pointer) {
+	// Changing the bound vertex arrays would corrupt any batch accumulated against the
+	// previous arrays, so flush first.
+	FlushPendingDraws();
+
 	if (format != shareable.interleavedFormat) {
 		int normalLength = RZVertexFormatNumElements(format, kGDElementType_Normal);
 		if (normalLength == 0) {
@@ -180,6 +220,7 @@ void GLStateManager::InterleavedArrays(GLenum format, GLsizei stride, void const
 }
 
 void GLStateManager::ColorMask(bool flag) {
+	FlushPendingDraws();
 	if (colorMaskFlag != flag) {
 		glColorMask(flag, flag, flag, flag);
 		colorMaskFlag = flag;
@@ -187,6 +228,7 @@ void GLStateManager::ColorMask(bool flag) {
 }
 
 void GLStateManager::DepthFunc(GLenum gdFunc) {
+	FlushPendingDraws();
 	if (depthFunc != gdFunc) {
 		SIZE_CHECK(gdFunc, glFuncMap);
 
@@ -196,6 +238,7 @@ void GLStateManager::DepthFunc(GLenum gdFunc) {
 }
 
 void GLStateManager::DepthMask(bool flag) {
+	FlushPendingDraws();
 	if (depthMask != flag) {
 		glDepthMask(flag);
 		depthMask = flag;
@@ -203,6 +246,7 @@ void GLStateManager::DepthMask(bool flag) {
 }
 
 void GLStateManager::StencilFunc(GLenum gdFunc, GLint ref, GLuint mask) {
+	FlushPendingDraws();
 	if (stencilFunc != gdFunc || stencilFuncRef != ref || stencilFuncMask != mask) {
 		SIZE_CHECK(gdFunc, glFuncMap);
 		glStencilFunc(glFuncMap[gdFunc], ref, mask);
@@ -214,6 +258,7 @@ void GLStateManager::StencilFunc(GLenum gdFunc, GLint ref, GLuint mask) {
 }
 
 void GLStateManager::StencilMask(GLuint mask) {
+	FlushPendingDraws();
 	if (stencilMask != mask) {
 		glStencilMask(mask);
 		stencilMask = mask;
@@ -221,6 +266,7 @@ void GLStateManager::StencilMask(GLuint mask) {
 }
 
 void GLStateManager::StencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
+	FlushPendingDraws();
 	if (stencilFailFunc != fail || stencilZFailFunc != zfail || stencilZPassFunc != zpass) {
 		static GLenum glStencilMap[] = { GL_KEEP, GL_REPLACE, GL_INCR, GL_DECR, GL_INVERT };
 		SIZE_CHECK(fail, glStencilMap);
@@ -236,6 +282,7 @@ void GLStateManager::StencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
 }
 
 void GLStateManager::BlendFunc(GLenum sfactor, GLenum dfactor) {
+	FlushPendingDraws();
 	if (blendSrcFactor != sfactor || blendDstFactor != dfactor) {
 		SIZE_CHECK(sfactor, glBlendMap);
 		SIZE_CHECK(dfactor, glBlendMap);
@@ -248,6 +295,7 @@ void GLStateManager::BlendFunc(GLenum sfactor, GLenum dfactor) {
 }
 
 void GLStateManager::AlphaFunc(GLenum func, GLclampf ref) {
+	FlushPendingDraws();
 	if (alphaFunc != func || alphaRef != ref) {
 		SIZE_CHECK(func, glFuncMap);
 		glAlphaFunc(glFuncMap[func], ref);
@@ -258,6 +306,7 @@ void GLStateManager::AlphaFunc(GLenum func, GLclampf ref) {
 }
 
 void GLStateManager::ShadeModel(GLenum mode) {
+	FlushPendingDraws();
 	if (shadeModel != mode) {
 		static GLenum shadeModelMap[2] = { GL_FLAT, GL_SMOOTH };
 		SIZE_CHECK(mode, shadeModelMap);
@@ -269,6 +318,7 @@ void GLStateManager::ShadeModel(GLenum mode) {
 }
 
 void GLStateManager::ColorMultiplier(float r, float g, float b) {
+	FlushPendingDraws();
 	if (ambientLightParams[0] != r || ambientLightParams[1] != g || ambientLightParams[2] != b) {
 		ambientLightParams[0] = r;
 		ambientLightParams[1] = g;
@@ -279,16 +329,29 @@ void GLStateManager::ColorMultiplier(float r, float g, float b) {
 }
 
 void GLStateManager::AlphaMultiplier(float a) {
+	FlushPendingDraws();
 	if (diffuseLightParams[3] != a) {
 		diffuseLightParams[3] = a;
 
-		if (ambientLightEnabled || diffuseLightEnabled) {
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseLightParams);
-		}
+		// GL_LIGHTING is left permanently enabled by cGDriver::Init (SimCity 4 expects
+		// a single fixed light to always be active), so the GL_FRONT/GL_DIFFUSE material
+		// alpha always feeds into each fragment's final alpha, and therefore into blending,
+		// regardless of whether vertex colors are currently being tracked.
+		//
+		// The old code only pushed the updated alpha to the GPU when EnableVertexColors()
+		// had turned on ambient/diffuse color tracking (GL_COLOR_MATERIAL) - but that is
+		// exactly the situation where this material alpha gets overwritten per-vertex from
+		// the color array anyway, so the update was moot there. Objects rendered *without*
+		// vertex colors - like cars, which are lit but don't carry a per-vertex color array -
+		// never had AlphaMultiplier's value applied at all, so their transparency never
+		// interpolated: they simply popped in and out once GL_BLEND toggled instead of
+		// fading smoothly. Always forward the new alpha to fix this.
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseLightParams);
 	}
 }
 
 void GLStateManager::EnableVertexColors(bool ambient, bool diffuse) {
+	FlushPendingDraws();
 	if (ambientLightEnabled != ambient || diffuseLightEnabled != diffuse) {
 		uint8_t oldFlags = (ambientLightEnabled ? 1 : 0) | (diffuseLightEnabled ? 2 : 0);
 		uint8_t newFlags = (ambient ? 1 : 0) | (diffuse ? 2 : 0);
@@ -326,6 +389,7 @@ void GLStateManager::EnableVertexColors(bool ambient, bool diffuse) {
 }
 
 void GLStateManager::MatrixMode(GLenum mode) {
+	FlushPendingDraws();
 	SIZE_CHECK(mode, matrixModeMap);
 
 	if (shareable.activeMatrixMode != mode) {
@@ -336,11 +400,13 @@ void GLStateManager::MatrixMode(GLenum mode) {
 }
 
 void GLStateManager::LoadMatrix(GLfloat const* m) {
+	FlushPendingDraws();
 	glLoadMatrixf(m);
 	isIdentityMatrix[shareable.activeMatrixMode] = false;
 }
 
 void GLStateManager::LoadIdentity(void) {
+	FlushPendingDraws();
 	if (!isIdentityMatrix[shareable.activeMatrixMode]) {
 		glLoadIdentity();
 		isIdentityMatrix[shareable.activeMatrixMode] = true;
@@ -348,6 +414,7 @@ void GLStateManager::LoadIdentity(void) {
 }
 
 void GLStateManager::Enable(GLenum gdCap) {
+	FlushPendingDraws();
 	if (gdCap == kGDCapability_Texture2D) {
 		areTextureUnitsDirty |= textureUnits[activeTextureUnit].Enable();
 	}
@@ -362,6 +429,7 @@ void GLStateManager::Enable(GLenum gdCap) {
 }
 
 void GLStateManager::Disable(GLenum gdCap) {
+	FlushPendingDraws();
 	if (gdCap == kGDCapability_Texture2D) {
 		areTextureUnitsDirty |= textureUnits[activeTextureUnit].Disable();
 	}
@@ -387,6 +455,7 @@ bool GLStateManager::IsEnabled(GLenum gdCap) {
 }
 
 void GLStateManager::TexEnv(GLenum target, GLenum pname, GLint gdParam) {
+	FlushPendingDraws();
 	//if (texEnvMode != gdParam) {
 		GLint paramMap[] = { GL_REPLACE, GL_MODULATE, GL_DECAL, GL_BLEND, GL_COMBINE, GL_COMBINE4_NV };
 
@@ -399,11 +468,13 @@ void GLStateManager::TexEnv(GLenum target, GLenum pname, GLint gdParam) {
 }
 
 void GLStateManager::TexEnv(GLenum target, GLenum pname, GLfloat const* params) {
+	FlushPendingDraws();
 	assert(pname == 1);
 	glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, params);
 }
 
 void GLStateManager::TexParameter(GLenum target, GLenum pname, GLint param) {
+	FlushPendingDraws();
 	static GLenum texParamNameMap[] = { GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T };
 	static GLenum texParamMap[] = { GL_NEAREST, GL_LINEAR, GL_CLAMP, GL_REPEAT, GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR };
 
@@ -417,6 +488,7 @@ void GLStateManager::TexParameter(GLenum target, GLenum pname, GLint param) {
 }
 
 void GLStateManager::TexStage(GLenum texUnit) {
+	FlushPendingDraws();
 	activeTextureUnit = texUnit;
 
 	glClientActiveTexture(GL_TEXTURE0 + texUnit);
@@ -426,22 +498,27 @@ void GLStateManager::TexStage(GLenum texUnit) {
 }
 
 void GLStateManager::TexStageCoord(uint32_t gdTexCoordSource) {
+	FlushPendingDraws();
 	areTextureUnitsDirty |= textureUnits[activeTextureUnit].TexStageCoord(gdTexCoordSource);
 }
 
 void GLStateManager::TexStageMatrix(GLfloat const* matrix, uint32_t unknown0, uint32_t unknown1, uint32_t gdTexMatFlags) {
+	FlushPendingDraws();
 	areTextureUnitsDirty |= textureUnits[activeTextureUnit].TexStageMatrix(matrix, unknown0, unknown1, gdTexMatFlags);
 }
 
 void GLStateManager::BindTexture(GLuint textureId) {
+	FlushPendingDraws();
 	areTextureUnitsDirty |= textureUnits[activeTextureUnit].SetTexture(textureId);
 }
 
 void GLStateManager::SetTexture(GLuint textureId, GLenum texUnit) {
+	FlushPendingDraws();
 	areTextureUnitsDirty |= textureUnits[texUnit].SetTexture(textureId);
 }
 
 void GLStateManager::SetTextureImmediately(GLuint textureId) {
+	FlushPendingDraws();
 	textureUnits[activeTextureUnit].SetTextureImmediately(textureId);
 }
 

@@ -19,6 +19,7 @@
 #pragma once
 #include <stdint.h>
 #include <stdio.h>
+#include <vector>
 #include "cIGZGDriver.h"
 #include "GLShareableState.h"
 #include "GLSupport.h"
@@ -57,6 +58,12 @@ public:
 	void DrawArrays(GLenum gdMode, GLint first, GLsizei count);
 	void DrawElements(GLenum gdMode, GLsizei count, GLenum gdType, void const* indices);
 	void InterleavedArrays(GLenum format, GLsizei stride, void const* pointer);
+
+	// Issues any DrawElements() calls accumulated by the batching below. Must be called
+	// before any GL state changes so that the batch is always drawn with the state that
+	// was active when each call in it was originally made (see cGDriver.cpp/GLStateManager.cpp
+	// for the full set of call sites - issue #9).
+	void FlushPendingDraws(void);
 
 public:
 	void ColorMask(bool flag);
@@ -152,4 +159,18 @@ private:
 	GLTextureUnit textureUnits[2];
 	uint8_t activeTextureUnit;
 	bool areTextureUnitsDirty;
+
+private:
+	// Batching for issue #9: consecutive DrawElements() calls that share the same
+	// primitive type/index type are accumulated here and issued together via
+	// glMultiDrawElementsARB in FlushPendingDraws(), instead of via one glDrawElements
+	// call per cGDriver::DrawElements() call. This only ever combines calls that are
+	// strictly back-to-back with no other state change in between - see FlushPendingDraws
+	// call sites throughout this file and cGDriver's other source files - so it never
+	// changes *what* gets drawn or in what state, only how many actual driver calls it
+	// takes to draw it.
+	GLenum pendingDrawMode;
+	GLenum pendingDrawType;
+	std::vector<GLsizei> pendingDrawCounts;
+	std::vector<void const*> pendingDrawIndices;
 };

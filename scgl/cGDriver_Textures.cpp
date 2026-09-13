@@ -78,6 +78,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::TexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, void const* pixels) {
+		state.FlushPendingDraws();
 #ifndef NDEBUG
 		if (target > 0) {
 			UNEXPECTED();
@@ -130,6 +131,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::TexStageCombine(eGDTextureStageCombineParamType gdParamType, eGDTextureStageCombineModeParam gdParam) {
+		state.FlushPendingDraws();
 		static GLenum pnameMap[] = { GL_COMBINE_RGB, GL_COMBINE_ALPHA };
 		static GLint paramMap[] = { GL_REPLACE, GL_MODULATE, GL_ADD, GL_ADD_SIGNED, GL_INTERPOLATE, GL_DOT3_RGB };
 
@@ -140,6 +142,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::TexStageCombine(eGDTextureStageCombineSourceParamType gdParamType, eGDTextureStageCombineSourceParam gdParam) {
+		state.FlushPendingDraws();
 		static GLenum pnameMap[] = { GL_SRC0_RGB, GL_SRC1_RGB, GL_SRC2_RGB, GL_SOURCE3_RGB_NV, GL_SRC0_ALPHA, GL_SRC1_ALPHA, GL_SRC2_ALPHA, GL_SOURCE3_ALPHA_NV };
 		static GLint paramMap[] = { GL_TEXTURE, GL_PREVIOUS, GL_CONSTANT, GL_PRIMARY_COLOR };
 
@@ -150,6 +153,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::TexStageCombine(eGDTextureStageCombineOperandType gdParamType, eGDBlend gdBlend) {
+		state.FlushPendingDraws();
 		static GLenum pnameMap[] = { GL_OPERAND0_RGB, GL_OPERAND1_RGB, GL_OPERAND2_RGB, GL_OPERAND3_RGB_NV, GL_OPERAND0_ALPHA, GL_OPERAND1_ALPHA, GL_OPERAND2_ALPHA, GL_OPERAND3_ALPHA_NV };
 
 		SIZE_CHECK((int)gdParamType, pnameMap);
@@ -159,6 +163,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::TexStageCombine(eGDTextureStageCombineScaleParamType gdPname, eGDTextureStageCombineScaleParam gdParam) {
+		state.FlushPendingDraws();
 		static GLenum pnameMap[] = { GL_RGB_SCALE, GL_ALPHA_SCALE };
 		static GLfloat paramMap[] = { 1.0f, 2.0f, 4.0f };
 
@@ -177,6 +182,7 @@ namespace nSCGL
 	}
 
 	intptr_t cGDriver::CreateTexture(uint32_t texformat, uint32_t width, uint32_t height, uint32_t levels, uint32_t texhints) {
+		state.FlushPendingDraws();
 		GLuint textureId;
 		glGenTextures(1, &textureId);
 
@@ -202,6 +208,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::LoadTextureLevel(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, uint32_t gdTexFormat, uint32_t gdType, uint32_t rowLength, void const* pixels) {
+		state.FlushPendingDraws();
 		GLenum glFormat = formatMap[gdTexFormat];
 		GLenum glType = typeMap[gdType];
 

@@ -100,6 +100,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::Clear(GLbitfield mask) {
+		state.FlushPendingDraws();
 		GLbitfield glMask = 0;
 		glMask  = (mask & 0x1000) >> 4; // GL_DEPTH_BUFFER_BIT   (0x100)
 		glMask |= (mask & 0x2000) >> 3; // GL_STENCIL_BUFFER_BIT (0x400)
@@ -239,6 +240,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::PolygonOffset(int32_t offset) {
+		state.FlushPendingDraws();
 		float fOffset = (float)offset;
 		if (offset < 0) {
 			fOffset += 4294967296.0f;

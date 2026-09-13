@@ -106,6 +106,7 @@ namespace nSCGL
 			if (strcmp(extensionName, "GL_NV_texture_env_combine4") == 0) supportedExtensions.nvTextureEnvCombine4 = true;
 			if (strcmp(extensionName, "GL_KHR_debug") == 0) supportedExtensions.debugOutput = true;
 			if (strcmp(extensionName, "GL_KHR_no_error") == 0) supportedExtensions.noError = true;
+			if (strcmp(extensionName, "GL_ARB_vertex_buffer_object") == 0) supportedExtensions.vertexBufferObject = true;
 		}
 
 		if (wglGetExtensionsStringARB != nullptr) {

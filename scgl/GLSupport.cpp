@@ -51,6 +51,15 @@ PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = nullptr;
 PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
 PFNWGLGETSWAPINTERVALEXTPROC wglGetSwapIntervalEXT = nullptr;
 
+PFNGLGENBUFFERSARBPROC glGenBuffersARB = nullptr;
+PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB = nullptr;
+PFNGLBINDBUFFERARBPROC glBindBufferARB = nullptr;
+PFNGLBUFFERDATAARBPROC glBufferDataARB = nullptr;
+PFNGLBUFFERSUBDATAARBPROC glBufferSubDataARB = nullptr;
+PFNGLMAPBUFFERARBPROC glMapBufferARB = nullptr;
+PFNGLUNMAPBUFFERARBPROC glUnmapBufferARB = nullptr;
+PFNGLMULTIDRAWELEMENTSPROC glMultiDrawElementsEXT = nullptr;
+
 #define TRY_LOAD(type, name) name = reinterpret_cast<type>(wglGetProcAddress(#name))
 
 void InitGLSupport(void) {
@@ -86,4 +95,19 @@ void InitGLSupport(void) {
 
 	TRY_LOAD(PFNWGLSWAPINTERVALEXTPROC, wglSwapIntervalEXT);
 	TRY_LOAD(PFNWGLGETSWAPINTERVALEXTPROC, wglGetSwapIntervalEXT);
+
+	TRY_LOAD(PFNGLGENBUFFERSARBPROC, glGenBuffersARB);
+	TRY_LOAD(PFNGLDELETEBUFFERSARBPROC, glDeleteBuffersARB);
+	TRY_LOAD(PFNGLBINDBUFFERARBPROC, glBindBufferARB);
+	TRY_LOAD(PFNGLBUFFERDATAARBPROC, glBufferDataARB);
+	TRY_LOAD(PFNGLBUFFERSUBDATAARBPROC, glBufferSubDataARB);
+	TRY_LOAD(PFNGLMAPBUFFERARBPROC, glMapBufferARB);
+	TRY_LOAD(PFNGLUNMAPBUFFERARBPROC, glUnmapBufferARB);
+
+	// Prefer the core GL 1.4 entry point name; fall back to the EXT-suffixed name
+	// for older drivers that only expose it via GL_EXT_multi_draw_arrays.
+	glMultiDrawElementsEXT = reinterpret_cast<PFNGLMULTIDRAWELEMENTSPROC>(wglGetProcAddress("glMultiDrawElements"));
+	if (glMultiDrawElementsEXT == nullptr) {
+		TRY_LOAD(PFNGLMULTIDRAWELEMENTSPROC, glMultiDrawElementsEXT);
+	}
 }

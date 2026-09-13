@@ -58,6 +58,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::SetVideoMode(int32_t newModeIndex, void* hwndProc, bool showWindow, bool) {
+		state.FlushPendingDraws();
 		if (newModeIndex == -1) {
 			ShowWindow(static_cast<HWND>(windowHandle), SW_HIDE);
 
@@ -326,10 +327,12 @@ namespace nSCGL
 	}
 
 	void cGDriver::Flush(void) {
+		state.FlushPendingDraws();
 		SwapBuffers(static_cast<HDC>(deviceContext));
 	}
 
 	void cGDriver::SetViewport(void) {
+		state.FlushPendingDraws();
 		glViewport(0, 0, windowWidth, windowHeight);
 		glDisable(GL_SCISSOR_TEST);
 
@@ -339,6 +342,7 @@ namespace nSCGL
 	}
 
 	void cGDriver::SetViewport(GLint x, GLint y, GLsizei width, GLsizei height) {
+		state.FlushPendingDraws();
 		glViewport(x, y, width, height);
 		glScissor(x, y, width, height);
 		glEnable(GL_SCISSOR_TEST);

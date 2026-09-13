@@ -87,6 +87,24 @@ namespace nSCGL
 		uint32_t renderbufferHandles[MAX_BUFFER_REGIONS];
 		uint32_t framebufferMasks[MAX_BUFFER_REGIONS];
 
+		// See ext/cGDriver_VertexBuffers.cpp for the assumptions behind this pool.
+		struct GLVertexBufferSlot
+		{
+			uint32_t glVertexBuffer = 0;
+			uint32_t glIndexBuffer = 0;
+			uint32_t vertexFormat = 0;
+			uint32_t stride = 0;
+			uint32_t reservedVertexCount = 0;
+			bool dynamic = false;
+			bool inUse = false;
+		};
+
+		static constexpr size_t MAX_VERTEX_BUFFER_SLOTS = 8;
+		GLVertexBufferSlot vertexBufferSlots[MAX_VERTEX_BUFFER_SLOTS];
+
+		int FindFreeVertexBufferSlot(void);
+		bool BindVertexBufferSlot(GLVertexBufferSlot& slot, void const* vertexData, uint32_t vertexCount);
+
 	private:
 		struct {
 			// OpenGL
@@ -99,6 +117,7 @@ namespace nSCGL
 			bool nvTextureEnvCombine4;
 			bool debugOutput;
 			bool noError;
+			bool vertexBufferObject;
 
 			// WGL
 			bool bufferRegion;

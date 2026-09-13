@@ -104,6 +104,7 @@ namespace nSCGL
 	}
 
 	bool cGDriver::ReadBufferRegion(uint32_t region, GLint dstX, GLint dstY, GLsizei width, GLsizei height, int32_t srcX, int32_t srcY) {
+		state.FlushPendingDraws();
 		uint32_t bufferRegionIndex = region - 1;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferHandles[bufferRegionIndex]);
 
@@ -185,6 +186,7 @@ namespace nSCGL
 	}
 
 	bool cGDriver::DrawBufferRegion(uint32_t region, GLint srcX, GLint srcY, GLsizei width, GLsizei height, GLint dstX, GLint dstY) {
+		state.FlushPendingDraws();
 		uint32_t bufferRegionIndex = region - 1;
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferHandles[bufferRegionIndex]);
 

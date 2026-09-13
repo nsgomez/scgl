@@ -83,6 +83,11 @@ namespace nSCGL
 			return buffer;
 		}
 
+		// This reads back real framebuffer contents, so any DrawElements calls batched
+		// by GLStateManager (issue #9) must be issued first or this would read stale
+		// pixels that don't yet include them.
+		state.FlushPendingDraws();
+
 		glReadBuffer(GL_BACK);
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 		glReadPixels(x, viewportHeight - startY - height, width, height, GL_RGB, GL_UNSIGNED_BYTE, colorBytes);

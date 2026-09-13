@@ -49,6 +49,29 @@ typedef void (APIENTRYP PFNGLBLITFRAMEBUFFERPROC) (GLint srcX0, GLint srcY0, GLi
 
 typedef const GLubyte* (APIENTRYP PFNGLGETSTRINGIPROC) (GLenum name, GLuint index);
 
+// GL_ARB_vertex_buffer_object, used by cIGZGDriverVertexBufferExtension (see ext/cGDriver_VertexBuffers.cpp).
+#ifndef GL_ARRAY_BUFFER
+#define GL_ARRAY_BUFFER                  0x8892
+#define GL_ELEMENT_ARRAY_BUFFER          0x8893
+#define GL_ARRAY_BUFFER_BINDING          0x8894
+#define GL_STATIC_DRAW                   0x88E4
+#define GL_DYNAMIC_DRAW                  0x88E8
+#define GL_WRITE_ONLY                    0x88B9
+#define GL_BUFFER_SIZE                   0x8764
+#endif
+
+typedef void (APIENTRYP PFNGLGENBUFFERSARBPROC) (GLsizei n, GLuint* buffers);
+typedef void (APIENTRYP PFNGLDELETEBUFFERSARBPROC) (GLsizei n, const GLuint* buffers);
+typedef void (APIENTRYP PFNGLBINDBUFFERARBPROC) (GLenum target, GLuint buffer);
+typedef void (APIENTRYP PFNGLBUFFERDATAARBPROC) (GLenum target, ptrdiff_t size, const void* data, GLenum usage);
+typedef void (APIENTRYP PFNGLBUFFERSUBDATAARBPROC) (GLenum target, ptrdiff_t offset, ptrdiff_t size, const void* data);
+typedef void* (APIENTRYP PFNGLMAPBUFFERARBPROC) (GLenum target, GLenum access);
+typedef GLboolean(APIENTRYP PFNGLUNMAPBUFFERARBPROC) (GLenum target);
+
+// GL_EXT_multi_draw_arrays / (core since GL 1.4), used to batch consecutive
+// DrawElements() calls together (see GLStateManager::FlushPendingDraws, issue #9).
+typedef void (APIENTRYP PFNGLMULTIDRAWELEMENTSPROC) (GLenum mode, const GLsizei* count, GLenum type, const void* const* indices, GLsizei drawcount);
+
 typedef void (APIENTRY* GLDEBUGPROC)(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 typedef void (APIENTRYP PFNGLDEBUGMESSAGECALLBACKPROC) (GLDEBUGPROC callback, const void* userParam);
 
@@ -278,5 +301,14 @@ extern PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;
 
 extern PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
 extern PFNWGLGETSWAPINTERVALEXTPROC wglGetSwapIntervalEXT;
+
+extern PFNGLGENBUFFERSARBPROC glGenBuffersARB;
+extern PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB;
+extern PFNGLBINDBUFFERARBPROC glBindBufferARB;
+extern PFNGLBUFFERDATAARBPROC glBufferDataARB;
+extern PFNGLBUFFERSUBDATAARBPROC glBufferSubDataARB;
+extern PFNGLMAPBUFFERARBPROC glMapBufferARB;
+extern PFNGLUNMAPBUFFERARBPROC glUnmapBufferARB;
+extern PFNGLMULTIDRAWELEMENTSPROC glMultiDrawElementsEXT;
 
 void InitGLSupport(void);
