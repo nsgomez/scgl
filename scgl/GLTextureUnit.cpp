@@ -31,6 +31,7 @@ GLTextureUnit::GLTextureUnit(GLuint texUnitId, GLShareableState* sharedState) :
 	stateFlags(GLTextureStateDiff_Clean),
 	sharedState(sharedState),
 	isIdentityTexMatrix(true),
+	textureParameters{ GL_LINEAR, GL_NEAREST_MIPMAP_LINEAR, GL_REPEAT, GL_REPEAT },
 	needsTextureParamRefresh(true)
 {
 }
@@ -39,8 +40,9 @@ void GLTextureUnit::ApplyStateChanges(void) {
 	int texCoordOffset = RZVertexFormatElementOffset(sharedState->interleavedFormat, kGDElementType_TexCoord, coordSrc);
 	void const* localTextureHandle = reinterpret_cast<uint8_t const*>(sharedState->interleavedPointer) + texCoordOffset;
 	bool isTextureHandleDirty = isEnabled && textureHandle != localTextureHandle;
+	bool isTextureParamRefreshDue = isEnabled && needsTextureParamRefresh;
 
-	if (stateFlags || isTextureHandleDirty) {
+	if (stateFlags || isTextureHandleDirty || isTextureParamRefreshDue) {
 		if (sharedState->glActiveTextureUnit != textureUnitId) {
 			glClientActiveTexture(GL_TEXTURE0 + textureUnitId);
 			glActiveTexture(GL_TEXTURE0 + textureUnitId);
@@ -54,6 +56,18 @@ void GLTextureUnit::ApplyStateChanges(void) {
 
 		if (stateFlags & GLTextureStateDiff_TextureId) {
 			glBindTexture(GL_TEXTURE_2D, textureId);
+		}
+
+		// OpenGL keeps filter and wrap on the texture object, so this stage's values go onto
+		// whatever it has bound. glTexParameteri acts on the active unit, which is why this
+		// happens here, after this unit was made active.
+		if (isTextureParamRefreshDue) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, textureParameters[0]);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, textureParameters[1]);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureParameters[2]);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureParameters[3]);
+
+			needsTextureParamRefresh = false;
 		}
 
 		if (isTextureHandleDirty) {
@@ -214,4 +228,15 @@ bool GLTextureUnit::TexStageMatrix(GLfloat const* matrix, GLuint unknown0, GLuin
 	glMatrixMode(matrixModeMap[sharedState->activeMatrixMode]);
 
 	return true;
+}
+
+bool GLTextureUnit::TexParameter(GLuint pname, GLint param) {
+	if (textureParameters[pname] != param) {
+		textureParameters[pname] = param;
+		needsTextureParamRefresh = true;
+
+		return true;
+	}
+
+	return false;
 }
