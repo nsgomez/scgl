@@ -72,6 +72,8 @@ GLStateManager::GLStateManager() :
 	shadeModel(1),        // GL_SMOOTH,
 	ambientLightEnabled(false),
 	diffuseLightEnabled(false),
+	isDiffuseFromVertexColor(false),
+	colorMaterialFlags(0),
 	ambientLightParams{ 0.2f, 0.2f, 0.2f, 1.0f },
 	diffuseLightParams{ 0.0f, 0.0f, 0.0f, 1.0f },
 	isIdentityMatrix{ true, true, true },
@@ -279,27 +281,41 @@ void GLStateManager::ColorMultiplier(float r, float g, float b) {
 }
 
 void GLStateManager::AlphaMultiplier(float a) {
-	if (diffuseLightParams[3] != a) {
-		diffuseLightParams[3] = a;
+	bool isAlphaChanged = diffuseLightParams[3] != a;
+	diffuseLightParams[3] = a;
 
-		if (ambientLightEnabled || diffuseLightEnabled) {
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseLightParams);
-		}
+	// Below one, the DirectX driver takes the diffuse material from the material instead
+	// of the vertex colour, so the faded alpha wins over the vertex alpha. At one it goes
+	// back to the vertex colour, if EnableVertexColors asked for that.
+	if (a < 1.0f) {
+		isDiffuseFromVertexColor = false;
 	}
+	else if (diffuseLightEnabled) {
+		isDiffuseFromVertexColor = true;
+	}
+
+	ApplyColorMaterial(isAlphaChanged);
 }
 
 void GLStateManager::EnableVertexColors(bool ambient, bool diffuse) {
-	if (ambientLightEnabled != ambient || diffuseLightEnabled != diffuse) {
-		uint8_t oldFlags = (ambientLightEnabled ? 1 : 0) | (diffuseLightEnabled ? 2 : 0);
-		uint8_t newFlags = (ambient ? 1 : 0) | (diffuse ? 2 : 0);
+	ambientLightEnabled = ambient;
+	diffuseLightEnabled = diffuse;
 
-		ambientLightEnabled = ambient;
-		diffuseLightEnabled = diffuse;
+	// As on the DirectX driver, this sets the diffuse source outright, whatever
+	// AlphaMultiplier chose before.
+	isDiffuseFromVertexColor = diffuse;
 
-		switch (newFlags) {
+	ApplyColorMaterial(false);
+}
+
+void GLStateManager::ApplyColorMaterial(bool isDiffuseMaterialChanged) {
+	uint8_t flags = (ambientLightEnabled ? 1 : 0) | (isDiffuseFromVertexColor ? 2 : 0);
+
+	if (flags != colorMaterialFlags) {
+		switch (flags) {
 		case 0:
 			glDisable(GL_COLOR_MATERIAL);
-			return;
+			break;
 
 		case 1:
 			glColorMaterial(GL_FRONT, GL_AMBIENT);
@@ -312,16 +328,21 @@ void GLStateManager::EnableVertexColors(bool ambient, bool diffuse) {
 		case 3:
 			glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 			break;
-
-		default:
-			assert(false);
-			break;
 		}
 
-		if (!oldFlags) {
+		if (flags && !colorMaterialFlags) {
 			glEnable(GL_COLOR_MATERIAL);
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseLightParams);
 		}
+
+		colorMaterialFlags = flags;
+		isDiffuseMaterialChanged = true;
+	}
+
+	// The lit alpha is the diffuse material's alpha. When the vertex colour stops feeding
+	// the diffuse material, OpenGL leaves the last vertex colour in it, so it is written
+	// back here.
+	if (isDiffuseMaterialChanged && !isDiffuseFromVertexColor) {
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseLightParams);
 	}
 }
 
