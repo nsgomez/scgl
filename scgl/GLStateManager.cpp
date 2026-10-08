@@ -299,7 +299,7 @@ void GLStateManager::EnableVertexColors(bool ambient, bool diffuse) {
 		switch (newFlags) {
 		case 0:
 			glDisable(GL_COLOR_MATERIAL);
-			return;
+			break;
 
 		case 1:
 			glColorMaterial(GL_FRONT, GL_AMBIENT);
@@ -318,9 +318,17 @@ void GLStateManager::EnableVertexColors(bool ambient, bool diffuse) {
 			break;
 		}
 
-		if (!oldFlags) {
+		if (newFlags && !oldFlags) {
 			glEnable(GL_COLOR_MATERIAL);
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseLightParams);
+		}
+
+		// The DirectX driver keeps the ambient material white unless the vertex colour
+		// feeds it. OpenGL leaves the last vertex colour in a material it stops tracking,
+		// so white is written back.
+		if ((oldFlags & 1) && !ambient) {
+			GLfloat ambientMaterialParams[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			glMaterialfv(GL_FRONT, GL_AMBIENT, ambientMaterialParams);
 		}
 	}
 }

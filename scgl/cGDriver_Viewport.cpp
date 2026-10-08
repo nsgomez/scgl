@@ -293,25 +293,22 @@ namespace nSCGL
 
 			glEnableClientState(GL_VERTEX_ARRAY);
 
-			// SimCity 4 doesn't use the GZDriverLightingExtension, but it does expect
-			// there to be a light enabled and to 45deg above x/y.
-			GLfloat lightPos[] = { 1.0, 1.0, 0.0, 0.0 };
+			// SimCity 4 doesn't use the GZDriverLightingExtension. What it draws with is
+			// the global ambient light (ColorMultiplier) times the ambient material, which
+			// the DirectX driver keeps white unless the vertex colour feeds it.
+			//
+			// No light is enabled. The DirectX driver never gives Direct3D a normal, and
+			// Direct3D lights a vertex without one with a dot product of zero, so a light
+			// adds nothing there. OpenGL would light the default normal (0,0,1) instead,
+			// and since the light turns with the camera, two of the four camera rotations
+			// came out brighter.
 			glEnable(GL_LIGHTING);
-			glEnable(GL_LIGHT0);
-			glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 
-			GLfloat ambientLightParams[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-			glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLightParams);
+			GLfloat ambientMaterialParams[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			glMaterialfv(GL_FRONT, GL_AMBIENT, ambientMaterialParams);
 
-			GLfloat diffuseLightParams[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLightParams);
-			glLightfv(GL_LIGHT0, GL_SPECULAR, diffuseLightParams);
-
-			GLfloat ambientMaterialParams[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-			glMaterialfv(GL_FRONT, GL_AMBIENT, ambientLightParams);
-
-			GLfloat diffuseMaterialParams[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseLightParams);
+			GLfloat diffuseMaterialParams[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseMaterialParams);
 
 			SetViewport();
 			SetLastError(DriverError::OK);
