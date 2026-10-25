@@ -78,7 +78,6 @@ GLStateManager::GLStateManager() :
 	enabledCapabilities{ false, false, false, false, false, false, false, false },
 	texEnvMode(1),        // GL_MODULATE
 	texEnvColor{ 0.0f, 0.0f, 0.0f, 0.0f },
-	textureParameters{ GL_LINEAR, GL_NEAREST_MIPMAP_LINEAR, GL_REPEAT, GL_REPEAT },
 	textureCoordSource(0),
 	activeTextureUnit(0),
 	areTextureUnitsDirty(false),
@@ -92,15 +91,16 @@ GLStateManager::GLStateManager() :
 void GLStateManager::ApplyTextureStages() {
 	for (uint32_t i = 0; i < MAX_TEXTURE_UNITS; i++) {
 		textureUnits[i].ApplyStateChanges();
+	}
 
-		if (textureUnits[i].IsEnabled() && textureUnits[i].needsTextureParamRefresh) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, textureParameters[0]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, textureParameters[1]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureParameters[2]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureParameters[3]);
+	// Applying the units can leave a different unit active than the one the game selected
+	// with TexStage. TexEnv, TexStageMatrix and texture uploads all act on the active unit,
+	// so hand it back.
+	if (shareable.glActiveTextureUnit != activeTextureUnit) {
+		glClientActiveTexture(GL_TEXTURE0 + activeTextureUnit);
+		glActiveTexture(GL_TEXTURE0 + activeTextureUnit);
 
-			textureUnits[i].needsTextureParamRefresh = false;
-		}
+		shareable.glActiveTextureUnit = activeTextureUnit;
 	}
 }
 
@@ -410,10 +410,10 @@ void GLStateManager::TexParameter(GLenum target, GLenum pname, GLint param) {
 	SIZE_CHECK(pname, texParamNameMap);
 	SIZE_CHECK(param, texParamMap);
 
-	textureParameters[pname] = texParamMap[param];
-	for (int i = 0; i < MAX_TEXTURE_UNITS; i++) {
-		textureUnits[0].needsTextureParamRefresh = true;
-	}
+	// Only the selected stage takes the value, whatever is bound there, as on the DirectX
+	// driver. The game caches filter and wrap per stage and skips the call when the stage
+	// already holds the value, so it relies on each stage keeping its own.
+	areTextureUnitsDirty |= textureUnits[activeTextureUnit].TexParameter(pname, texParamMap[param]);
 }
 
 void GLStateManager::TexStage(GLenum texUnit) {

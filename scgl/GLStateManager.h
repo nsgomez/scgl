@@ -144,8 +144,6 @@ private:
 	uint8_t texEnvMode;
 	GLfloat texEnvColor[4];
 
-	GLint textureParameters[4];
-
 	uint32_t textureCoordSource;
 
 private:

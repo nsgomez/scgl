@@ -48,6 +48,7 @@ public:
 
 	bool TexStageCoord(GLuint gdTexCoordSource);
 	bool TexStageMatrix(GLfloat const* matrix, GLuint unknown0, GLuint unknown1, GLuint gdTexMatFlags);
+	bool TexParameter(GLuint pname, GLint param);
 
 private:
 	void ApplyNewEnabledState(void);
@@ -63,6 +64,10 @@ private:
 	void const* textureHandle;
 	bool isEnabled;
 	bool isIdentityTexMatrix;
+
+	// Filter and wrap, in the order of TexParameter's pname: mag filter, min filter, wrap S
+	// and wrap T. They belong to the stage, as on the DirectX driver, not to the texture.
+	GLint textureParameters[4];
 
 private:
 	unsigned char stateFlags;
