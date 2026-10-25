@@ -100,7 +100,8 @@ public:
 
 private:
 	void ApplyTextureStages();
-	
+	void ApplyColorMaterial(bool isDiffuseMaterialChanged);
+
 public:
 	struct GLShareableState shareable;
 
@@ -134,6 +135,8 @@ private:
 
 	bool ambientLightEnabled;
 	bool diffuseLightEnabled;
+	bool isDiffuseFromVertexColor;
+	uint8_t colorMaterialFlags;
 	float ambientLightParams[4];
 	float diffuseLightParams[4];
 
@@ -143,8 +146,6 @@ private:
 
 	uint8_t texEnvMode;
 	GLfloat texEnvColor[4];
-
-	GLint textureParameters[4];
 
 	uint32_t textureCoordSource;
 
