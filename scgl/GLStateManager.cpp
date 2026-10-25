@@ -421,7 +421,25 @@ void GLStateManager::TexEnv(GLenum target, GLenum pname, GLint gdParam) {
 
 void GLStateManager::TexEnv(GLenum target, GLenum pname, GLfloat const* params) {
 	assert(pname == 1);
-	glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, params);
+
+	if (texEnvColor[0] == params[0] && texEnvColor[1] == params[1] && texEnvColor[2] == params[2] && texEnvColor[3] == params[3]) {
+		return;
+	}
+
+	for (int i = 0; i < 4; i++) {
+		texEnvColor[i] = params[i];
+	}
+
+	// The DirectX driver keeps one texture factor for every stage (D3DRS_TEXTUREFACTOR),
+	// and the game sets it without selecting a stage first: the building shadows select
+	// stage 1, then set a faded colour for stage 0's combiner to read. OpenGL keeps a
+	// colour per unit, so every unit gets it.
+	for (uint32_t i = 0; i < MAX_TEXTURE_UNITS; i++) {
+		glActiveTexture(GL_TEXTURE0 + i);
+		glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, texEnvColor);
+	}
+
+	glActiveTexture(GL_TEXTURE0 + shareable.glActiveTextureUnit);
 }
 
 void GLStateManager::TexParameter(GLenum target, GLenum pname, GLint param) {
